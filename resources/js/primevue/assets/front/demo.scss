@@ -1,0 +1,7 @@
+/*@import './flags/flags.css'*/
+@import "./code.scss";
+
+.required:after {
+    content: " *";
+    color: #f7886f !important;
+}
