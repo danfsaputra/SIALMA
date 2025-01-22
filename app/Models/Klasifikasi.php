@@ -10,7 +10,7 @@ class Klasifikasi extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $connection = 'pgsql';
+    protected $connection = 'mysql';
 
     protected $table = 'klasifikasi_arsips';
     protected $primaryKey = "id";

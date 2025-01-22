@@ -10,7 +10,7 @@ class Perda extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $connection = 'pgsql';
+    protected $connection = 'mysql';
 
     protected $table = 'penegakan_perda';
     protected $primaryKey = "id";

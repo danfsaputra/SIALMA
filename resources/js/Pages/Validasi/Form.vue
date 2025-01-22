@@ -98,7 +98,7 @@ const submitForm = async (data) => {
         await axios.get("/sanctum/csrf-cookie");
 
         axios
-            .post("/api/alihmedia/store", data)
+            .post("/api/validasidata/store", data)
             .then((res) => {
                 if (res.data.success == true) {
                     Swal("", res.data.message, "success").then(() => {
@@ -200,7 +200,7 @@ onMounted(() => {
             </div>
 
                 <div class="flex justify-end gap-2">
-                    <Link :href="route('alihmedia')">
+                    <Link :href="route('validasi')">
                         <Button
                             type="button"
                             label="Batal"

@@ -10,7 +10,7 @@ class OPD extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $connection = 'pgsql';
+    protected $connection = 'mysql';
 
     protected $table = 'departments';
     protected $primaryKey = "id";

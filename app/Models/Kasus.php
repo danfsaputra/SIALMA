@@ -9,7 +9,7 @@ class Kasus extends Model
 {
     use HasFactory;
 
-    protected $connection = 'pgsql';
+    protected $connection = 'mysql';
 
     protected $table = 'kasus';
     protected $primaryKey = "id";

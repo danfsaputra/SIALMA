@@ -21,7 +21,7 @@ class AlihmediaStoreRequest extends FormRequest
      */
     public function rules(): array
     {
-        $file_rules = $this->id ? 'nullable' : 'required';
+        //$file_rules = $this->id ? 'nullable' : 'required';
 
         return [
             'opd'               => 'required',
@@ -33,8 +33,9 @@ class AlihmediaStoreRequest extends FormRequest
             'no_box'            => 'required',
             'no_berkas'         => 'required',
             'keterangan'        => 'required',
-            // 'file_arsip'        => 'required',
-            'file_arsip'        => $file_rules,
+            //'status'            => 'required',
+            'file_arsip'        => 'required',
+            //'file_arsip'        => $file_rules,
         ];
     }
 
@@ -50,6 +51,7 @@ class AlihmediaStoreRequest extends FormRequest
             'no_box.required'               => 'Nomor Box harus diisi',
             'no_berkas.required'            => 'Nomor berkas harus diisi',
             'keterangan.required'           => 'Keterangan harus diisi',
+            //'status.required'               => 'Status harus diisi',
             // 'file_arsip.required'           => 'File arsip harus diisi',
         ];
     }

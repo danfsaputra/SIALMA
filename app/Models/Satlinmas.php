@@ -9,7 +9,7 @@ class Satlinmas extends Model
 {
     use HasFactory;
 
-    protected $connection = 'pgsql';
+    protected $connection = 'mysql';
 
     protected $table = 'anggota_satlinmas';
     protected $primaryKey = "id";

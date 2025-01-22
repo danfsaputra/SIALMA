@@ -39,6 +39,21 @@ const model = ref([
         ],
     },
     {
+        label: "Berita Acara dan Daftar Arsip",
+        items: [
+            {
+                label: "Berita Acara Alih Media",
+                icon: "pi pi-file-edit",
+                to: "/berita",
+            },
+            {
+                label: "Daftar Arsip Alih Media",
+                icon: "pi pi-file-edit",
+                to: "/daftararsip",
+            },
+        ],
+    },
+    {
         label: "Master Data",
         items: [
             {

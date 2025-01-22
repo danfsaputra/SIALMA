@@ -47,35 +47,7 @@ const closeForm = () => {
 };
 
 const viewDetail = (id) => {
-    router.visit("/alihmedia-detail", { method: "get", data: { id: id } });
-};
-
-const editForm = (id) => {
-    router.visit("/alihmedia-form", { method: "get", data: { id: id } });
-};
-
-const deleteData = (id) => {
-    Swal({
-        icon: "question",
-        text: "Anda yakin menghapus data ini ?",
-        showCancelButton: true,
-        cancelButtonText: "Batal",
-    }).then(async (result) => {
-        if (result.isConfirmed) {
-            try {
-                await axios.get("/sanctum/csrf-cookie");
-
-                axios
-                    .post("/api/alihmedia/destroy/" + id)
-                    .then((res) => {
-                        Swal("", res.data.message, "success");
-                    })
-                    .finally(() => fetchData());
-            } catch (err) {
-                console.log(err);
-            }
-        }
-    });
+    router.visit("/klasifikasi-detail", { method: "get", data: {nm_klasifikasi: nm_klasifikasi } });
 };
 
 // const fetchKlasifikasi = async () => {
@@ -223,25 +195,11 @@ onMounted(() => {
                         <Column header="Aksi">
                             <template #body="slotProps">
                                 <Button
-                                    icon="pi pi-pencil"
-                                    severity="info"
-                                    rounded
-                                    outlined
-                                    @click="editForm(slotProps.data.id)"
-                                />
-                                <Button
                                     icon="pi pi-file"
                                     severity="info"
                                     rounded
                                     outlined
-                                    @click="viewDetail(slotProps.data.id)"
-                                />
-                                <Button
-                                    icon="pi pi-trash"
-                                    severity="danger"
-                                    rounded
-                                    outlined
-                                    @click="deleteData(slotProps.data.id)"
+                                    @click="() => viewDetail(slotProps.data.nm_klasifikasi)"
                                 />
                             </template>
                         </Column>

@@ -9,7 +9,7 @@ class Kasandra extends Model
 {
     use HasFactory;
 
-    protected $connection = 'pgsql';
+    protected $connection = 'mysql';
 
     protected $table = 'kasandra';
     protected $primaryKey = "id";

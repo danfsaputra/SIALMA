@@ -6,6 +6,7 @@ use App\Models\Klasifikasi;
 use App\Models\OPD;
 use Illuminate\Http\Request;
 
+
 class ReferensiController extends Controller
 {
     public function getKlasifikasi()
@@ -15,25 +16,25 @@ class ReferensiController extends Controller
         return response()->json($klasifikasi);
     }
 
-    public function getOPD(Request $request)
+    public function getOPD()
     {
-        $user = $request->user();
-        // $department = $request->department();
+        #$user = $request->user();
+        #$department = $request->department();
 
-        // $department = OPD::WhereId($user->departments_id);
-        // $opd = OPD::all();
+        #$department = OPD::WhereId($user->departments_id);
+        $opd = OPD::all();
 
-        // // $opd = OPD::where($department->id, $user->departments_id);
-
-        // return response()->json($opd);
-
-
-        // $user = $request->user();
-
-        // Mengambil data OPD yang memiliki departments_id sama dengan departments_id milik user
-        $opd = OPD::where('id', $user->departments_id)->get();
+        #$opd = OPD::where($department->id, $user->departments_id);
 
         return response()->json($opd);
+
+
+        #$user = $request->user();
+
+        // Mengambil data OPD yang memiliki departments_id sama dengan departments_id milik user
+        #$opd = OPD::where('id', $user->departments_id)->get();
+
+        #return response()->json($opd);
     }
 
     // public function getDesa($id)

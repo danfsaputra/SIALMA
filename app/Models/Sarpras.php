@@ -10,7 +10,7 @@ class Sarpras extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $connection = 'pgsql';
+    protected $connection = 'mysql';
 
     protected $table = 'form_sarpras';
     protected $primaryKey = "id";

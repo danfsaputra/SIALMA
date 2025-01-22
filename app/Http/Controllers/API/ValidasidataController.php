@@ -5,29 +5,33 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Validasidata;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ValidasidataController extends Controller
 {
     public function getData(Request $request)
     {
-
-        $search = $request->input('search');
-        $perPage = $request->input('perPage');
-        $sortField = $request->input('sortField');
-        $sortOrder = $request->input('sortOrder') == 1 ? 'asc' : 'desc';
+        // Ambil input dengan nilai default jika tidak ada
+        $search = $request->input('search', '');
+        $perPage = $request->input('perPage', 10); // Default 10
+        $sortField = $request->input('sortField', 'id'); // Default 'id'
+        $sortOrder = $request->input('sortOrder') == 1 ? 'asc' : 'desc'; // Default 'asc'
         $user = $request->user();
-        // $user_id = $user->role == 'Admin' ? '%' : $user->id;
 
+        // Validasi user
+        if (!$user) {
+            return response()->json(['error' => 'User not authenticated'], 401);
+        }
+
+        // Query data
         $data = Validasidata::where('status', 'Dikirim')
-        // ->where('validator_id', 'ilike', $user_id)
-        ->when($user->role !== 'Admin', function ($query) use ($user) {
-            $query->where('user_id', $user->departments_id);
-        })
             ->when($search, function ($query) use ($search) {
-            $query->where('opd', 'ilike', '%' . $search . '%')
-            ->orWhere('no_arsip', 'ilike', '%' . $search . '%')
-            ->orWhere('klasifikasi_arsip', 'ilike', '%' . $search . '%');
-        })
+                $query->where(function ($query) use ($search) {
+                    $query->where('opd', 'like', '%' . $search . '%')
+                        ->orWhere('no_arsip', 'like', '%' . $search . '%')
+                        ->orWhere('klasifikasi_arsip', 'like', '%' . $search . '%');
+                });
+            })
             ->when($sortField, function ($query) use ($sortField, $sortOrder) {
                 $query->orderBy($sortField, $sortOrder);
             })
@@ -36,22 +40,38 @@ class ValidasidataController extends Controller
         return response()->json($data);
     }
 
-    public function store($request)
+    public function store(Request $request)
     {
-        $user = $request->user();
-        // $departments_id = $user->departments_id;
-
-        // dd($departments_id);
-
-        $post_data = array_merge($request->all(), [
-            "validator_id" => $user->departments_id,
+        $validatedData = $request->validate([
+            'status' => 'required|string|max:255',
         ]);
 
-        $alihmedia = Validasidata::updateOrCreate(["validator_id" => $request->departments_id], $post_data);
+        try {
+            $user = $request->user();
+            $departments_id = $user->departments_id;
 
-        dd($user);
+            $post_data = array_merge($validatedData, [
+                "validator_id" => $departments_id,
+            ]);
 
-        return response()->json(["success" => true, "message" => "Berhasil menyimpan data !", "validator_id" => $alihmedia->departments_id]);
+            $validasidata = Validasidata::updateOrCreate(
+                ["id" => $request->id], // Menggunakan id untuk update atau create
+                $post_data
+            );
+
+            return response()->json([
+                "success" => true,
+                "message" => "Berhasil menyimpan data!",
+                "data" => $validasidata,
+            ]);
+        } catch (\Exception $e) {
+            // Tangkap dan log error jika ada exception
+            Log::error('Error pada penyimpanan data: ' . $e->getMessage());
+            return response()->json([
+                "success" => false,
+                "message" => "Terjadi kesalahan saat menyimpan data!",
+            ], 500);
+        }
     }
 
     public function getById($id)
@@ -61,7 +81,7 @@ class ValidasidataController extends Controller
         return response()->json($alihmedia);
     }
 
-        public function getImage($file)
+    public function getImage($file)
     {
         $storagePath = storage_path('app/alihmedia/' . $file);
 

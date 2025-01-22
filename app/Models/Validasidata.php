@@ -10,12 +10,12 @@ class Validasidata extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $connection = 'pgsql';
+    protected $connection = 'mysql';
 
     protected $table = 'alihmedia';
     protected $primaryKey = "id";
     protected $guarded = ['id'];
 
-    protected $keyType = 'string';
-    public $incrementing = false;
+    protected $keyType = 'int';
+    public $incrementing = true;
 }

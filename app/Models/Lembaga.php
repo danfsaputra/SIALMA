@@ -9,7 +9,7 @@ class Lembaga extends Model
 {
     use HasFactory;
 
-    protected $connection = 'pgsql';
+    protected $connection = 'mysql';
 
     protected $table = 'anggaran_profil_lembaga';
     protected $primaryKey = "id";

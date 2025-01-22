@@ -10,7 +10,7 @@ class Pegawaikab extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $connection = 'pgsql';
+    protected $connection = 'mysql';
 
     protected $table = 'pegawai_kab';
     protected $primaryKey = "id";
