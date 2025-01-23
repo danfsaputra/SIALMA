@@ -12,25 +12,25 @@ const props = defineProps({
 
 const formState = {
     id: "",
-    opd: "",
-    tgl_arsip: "",
-    no_arsip: "",
-    jenis_arsip: "",
-    klasifikasi_arsip: "",
-    uraian: "",
-    no_box: "",
-    no_berkas: "",
-    keterangan: "",
+    nomor_surat: "",
+    tanggal: "",
+    tempat: "",
+    jenis_media: "",
+    jumlah_arsip: "",
+    keterangan_arsip: "",
+    proses: "",
+    pelaksana: "",
+    kepala_dinas: "",
     file_arsip: "",
 };
 
 // const photoSource = ref('/app/alihmedia/$file');
 
-const pdfUrl = ref('/app/alihmedia/${file_arsip}');
+const pdfUrl = ref('/app/berita/${file_berita}');
 
-const fetchPdfUrl = async (file_arsip) => {
+const fetchPdfUrl = async (file_berita) => {
     try {
-        const response = await fetch(`/app/alihmedia/${file_arsip}`);
+        const response = await fetch(`/app/berita/${file_berita}`);
         const blob = await response.blob();
         pdfUrl.value = URL.createObjectURL(blob);
     } catch (error) {
@@ -40,14 +40,14 @@ const fetchPdfUrl = async (file_arsip) => {
 
 const formData = reactive({ ...formState });
 
-const klasifikasi = ref([]);
-const OPD = ref([]);
+//const klasifikasi = ref([]);
+//const OPD = ref([]);
 
-const fetchKlasifikasi = async () => {
+/*const fetchKlasifikasi = async () => {
     axios.get("api/getKlasifikasi").then((res) => {
         klasifikasi.value = res.data;
     });
-};
+};*/
 
 const fetchOPD = async () => {
     axios.get("api/getOPD").then((res) => {
@@ -80,29 +80,29 @@ const fetchOPD = async () => {
 // };
 
 const editForm = (id) => {
-    router.visit("/alihmedia-form", { method: "get", data: { id: id } });
+    router.visit("/berita-form", { method: "get", data: { id: id } });
 };
 
 const fetchData = () => {
     axios
-        .get(`/api/alihmedia/getById/${props.id}`)
+        .get(`/api/berita/getById/${props.id}`)
         .then((res) => {
-            const tgl_arsip = new Date(res.data.tgl_arsip);
+            const tanggal = new Date(res.data.tanggal);
 
             formData.id = res.data.id;
-            formData.opd = res.data.opd;
-            formData.jenis_arsip = res.data.jenis_arsip;
-            formData.tgl_arsip = tgl_arsip.toLocaleDateString();
-            formData.no_arsip = res.data.no_arsip;
-            formData.uraian = res.data.uraian;
-            formData.keterangan = res.data.keterangan;
-            formData.klasifikasi_arsip = res.data.klasifikasi_arsip;
-            formData.no_box = res.data.no_box;
-            formData.no_berkas = res.data.no_berkas;
+            formData.nomor_surat = res.data.nomor_surat;
+            formData.tanggal = res.data.tanggal;
+            formData.tempat = res.data.tempat;
+            formData.jenis_media = res.data.jenis_media;
+            formData.jumlah_arsip = res.data.jumlah_arsip;
+            formData.keterangan_arsip = res.data.keterangan_arsip;
+            formData.proses = res.data.proses;
+            formData.pelaksana = res.data.pelaksana;
+            formData.kepala_dinas = res.data.kepala_dinas;
             // formData.file_arsip = res.data.file_arsip;
             formData.created_at = res.data.created_at;
             formData.updated_at = res.data.updated_at;
-            pdfUrl.value = "/api/getImage/" + res.data.file_arsip;
+            pdfUrl.value = "/api/getImage/" + res.data.file_berita;
         })
         .catch((error) => {
             console.error("Error fetching data:", error);
@@ -126,8 +126,8 @@ watchEffect(() => {
 
 onMounted(() => {
     if (props.id) fetchData();
-    fetchKlasifikasi();
-    fetchOPD();
+    //fetchKlasifikasi();
+    //fetchOPD();
     fetchPdfUrl(formData.id);
 });
 
@@ -137,7 +137,7 @@ onMounted(() => {
     <app-layout>
         <div class="card">
             <div class="flex flex-row align-items-end justify-content-between">
-                <h5 class="mb-0 text-blue-600 uppercase">Informasi Arsip</h5>
+                <h5 class="mb-0 text-blue-600 uppercase">Informasi Berita Acara</h5>
                 <Button
                     type="button"
                     label="Ubah Data"
@@ -153,29 +153,20 @@ onMounted(() => {
             <div class="grid mb-3">
                 <div class="pb-0 col-12">
                     <div class="flex flex-row gap-2">
-                        <label class="w-2 font-normal">OPD</label>
-                        <h6 class="w-10 m-0 font-semibold">: {{ formData.opd }}</h6>
+                        <label class="w-2 font-normal">No Surat</label>
+                        <h6 class="w-10 m-0 font-semibold">: {{ formData.nomor_surat }}</h6>
                     </div>
                 </div>
                 <div class="pb-0 col-12">
                     <div class="flex flex-row gap-2">
-                        <label class="w-2 font-normal">Jenis Arsip </label>
-                        <h6 class="w-10 m-0 font-semibold">: {{ formData.jenis_arsip }}</h6>
+                        <label class="w-2 font-normal">Tanggal </label>
+                        <h6 class="w-10 m-0 font-semibold">: {{ formData.tanggal }}</h6>
                     </div>
                 </div>
                 <div class="pb-0 col-12">
                     <div class="flex flex-row gap-2">
-                        <label class="w-2 font-normal">Tanggal Arsip</label>
-                        <h6 class="w-10 m-0 font-semibold">: {{ formData.tgl_arsip }}</h6>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid mb-3">
-                <div class="pb-0 col-12">
-                    <div class="flex flex-row gap-2">
-                        <label class="w-2 font-normal">Nomor Arsip</label>
-                        <h6 class="w-10 m-0 font-semibold">: {{ formData.no_arsip }}</h6>
+                        <label class="w-2 font-normal">Jenis Media</label>
+                        <h6 class="w-10 m-0 font-semibold">: {{ formData.jenis_media }}</h6>
                     </div>
                 </div>
             </div>
@@ -183,8 +174,17 @@ onMounted(() => {
             <div class="grid mb-3">
                 <div class="pb-0 col-12">
                     <div class="flex flex-row gap-2">
-                        <label class="w-2 font-normal">Uraian Arsip</label>
-                        <h6 class="w-10 m-0 font-semibold">: {{ formData.uraian }}</h6>
+                        <label class="w-2 font-normal">Jumlah Arsip</label>
+                        <h6 class="w-10 m-0 font-semibold">: {{ formData.jumlah_arsip }}</h6>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid mb-3">
+                <div class="pb-0 col-12">
+                    <div class="flex flex-row gap-2">
+                        <label class="w-2 font-normal">Tempat Pelaksanaan</label>
+                        <h6 class="w-10 m-0 font-semibold">: {{ formData.tempat }}</h6>
                     </div>
                 </div>
             </div>
@@ -193,36 +193,36 @@ onMounted(() => {
                 <div class="pb-0 col-12">
                     <div class="flex flex-row gap-2">
                         <label class="w-2 font-normal">Keterangan</label>
-                        <h6 class="w-10 m-0 font-semibold">: {{ formData.keterangan }}</h6>
+                        <h6 class="w-10 m-0 font-semibold">: {{ formData.keterangan_arsip }}</h6>
                     </div>
                 </div>
             </div>
 
-            <h5 class="text-blue-600 uppercase">Informasi Klasifikasi</h5>
+            <h5 class="text-blue-600 uppercase">Informasi Proses Alihmedia</h5>
             <hr />
 
             <div class="grid mb-3">
                 <div class="pb-0 col-12">
                     <div class="flex flex-row gap-2">
-                        <label class="w-2 font-normal">Klasifikasi</label>
-                        <h6 class="w-10 m-0 font-semibold">: {{ formData.klasifikasi_arsip }}</h6>
+                        <label class="w-2 font-normal">Proses Alihmedia</label>
+                        <h6 class="w-10 m-0 font-semibold">: {{ formData.proses }}</h6>
                     </div>
                 </div>
                 <div class="pb-0 col-12">
                     <div class="flex flex-row gap-2">
-                        <label class="w-2 font-normal">Nomor Boks</label>
-                        <h6 class="w-10 m-0 font-semibold">: {{ formData.no_box }}</h6>
+                        <label class="w-2 font-normal">Pelaksana</label>
+                        <h6 class="w-10 m-0 font-semibold">: {{ formData.pelaksana }}</h6>
                     </div>
                 </div>
                 <div class="pb-0 col-12">
                     <div class="flex flex-row gap-2">
-                        <label class="w-2 font-normal">Nomor Berkas</label>
-                        <h6 class="w-10 m-0 font-semibold">: {{ formData.no_berkas }}</h6>
+                        <label class="w-2 font-normal">Kepala Dinas</label>
+                        <h6 class="w-10 m-0 font-semibold">: {{ formData.kepala_dinas }}</h6>
                     </div>
                 </div>
             </div>
 
-            <h5 class="text-blue-600 uppercase">File Arsip</h5>
+            <h5 class="text-blue-600 uppercase">File Berita Acara</h5>
             <hr />
 
             <div class="grid mb-3">

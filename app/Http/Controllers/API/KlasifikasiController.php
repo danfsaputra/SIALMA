@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Klasifikasi;
 use Illuminate\Http\Request;
-use App\Http\Controllers\API\ValidasidataController;
+//use App\Http\Controllers\API\ValidasidataController;
 
 
 class KlasifikasiController extends Controller
@@ -33,7 +33,7 @@ class KlasifikasiController extends Controller
         return response()->json($data);
     }
 
-    public function getAlihmediaData(Request $request)
+    /*public function getAlihmediaData(Request $request)
     {
         $search = $request->input('search');
         $perPage = $request->input('perPage');
@@ -57,5 +57,5 @@ class KlasifikasiController extends Controller
             ->paginate($perPage);
 
         return response()->json($data);
-    }
+    }*/
     }

@@ -102,6 +102,33 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('Daftararsip/Detail', ['title' => 'Detail Arsip', 'submenu' => 'Daftar Arsip', 'id' => $request->id]);
     })->name('daftararsip-detail');
 
+    // Hak Akses
+    Route::get('/hak', function () {
+        return Inertia::render('HakAkses/Main', ['title' => 'Hak Akses', 'submenu' => 'Master Data']);
+    })->name('hak');
+
+    Route::get('/hak-detail', function (Request $request) {
+        return Inertia::render('HakAkses/Detail', ['title' => 'Detail Hak Akses', 'submenu' => 'Pengaturan', 'id' => $request->id]);
+    })->name('hak-detail');
+
+    Route::get('/hak-form', function (Request $request) {
+        return Inertia::render('HakAkses/Form', ['title' => 'Form Hak Akses', 'submenu' => 'Pengaturan', 'id' => $request->id]);
+    })->name('hak-form');
+
+    // SKKAAD
+    Route::get('/skkaad', function () {
+        return Inertia::render('Keamanan/Main', ['title' => 'Klasifikasi Keamanan', 'submenu' => 'Master Data']);
+    })->name('skkaad');
+
+    Route::get('/skkaad-detail', function (Request $request) {
+        return Inertia::render('Keamanan/Detail', ['title' => 'Detail Klasifikasi Keamanan', 'submenu' => 'Master Data', 'id' => $request->id]);
+    })->name('skkaad-detail');
+
+    Route::get('/skkaad-form', function (Request $request) {
+        return Inertia::render('Keamanan/Form', ['title' => 'Form Klasifikasi Keamanan', 'submenu' => 'Master Data', 'id' => $request->id]);
+    })->name('skkaad-form');
+
+
 });
 
 require __DIR__ . '/auth.php';

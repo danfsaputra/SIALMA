@@ -9,6 +9,8 @@ use App\Http\Controllers\API\ValidasidataController;
 use App\Http\Controllers\ReferensiController;
 use App\Http\Controllers\API\BeritaacaraController;
 use App\Http\Controllers\API\DaftararsipController;
+use App\Http\Controllers\API\HakaksesController;
+use App\Http\Controllers\API\KeamananController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -73,4 +75,20 @@ Route::prefix('daftararsip')->group(function () {
     Route::get('/getById/{id}', [DaftararsipController::class, 'getById']);
     Route::post('/store', [DaftararsipController::class, 'store']);
     Route::post('/destroy/{id}', [DaftararsipController::class, 'destroy']);
+});
+
+// Hak Akses
+Route::prefix('hak')->group(function () {
+    Route::get('/', [HakaksesController::class, 'getData']);
+    Route::get('/getById/{id}', [HakaksesController::class, 'getById']);
+    Route::post('/store', [HakaksesController::class, 'store']);
+    Route::post('/destroy/{id}', [HakaksesController::class, 'destroy']);
+});
+
+// SKKAAD
+Route::prefix('skkaad')->group(function () {
+    Route::get('/', [KeamananController::class, 'getData']);
+    Route::get('/getById/{id}', [KeamananController::class, 'getById']);
+    Route::post('/store', [KeamananController::class, 'store']);
+    Route::post('/destroy/{id}', [KeamananController::class, 'destroy']);
 });

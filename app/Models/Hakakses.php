@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Keamanan extends Model
+class Hakakses extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $connection = 'mysql';
 
-    protected $table = 'ref_klas_keamanans';
+    protected $table = 'ref_hak_akses';
     protected $primaryKey = "id";
     protected $guarded = ['id'];
 }
