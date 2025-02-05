@@ -40,10 +40,6 @@ const onSort = (event) => {
     fetchData();
 };
 
-// const openForm = () => {
-//     isVisible.value = true;
-// };
-
 const closeForm = () => {
     isVisible.value = false;
     fetchData();
@@ -196,7 +192,7 @@ onMounted(() => {
                             field="tgl_arsip"
                             header="Tanggal Arsip"
                             sortable
-                            dateFormat="dd/mm/yy"
+                            dateFormat="yy/mm/dd"
                         >
                         <template #body="slotProps">
                             <tag>

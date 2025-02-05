@@ -26,11 +26,11 @@ const formState = {
 
 // const photoSource = ref('/app/alihmedia/$file');
 
-const pdfUrl = ref('/app/alihmedia/${file_arsip}');
+const pdfUrl = ref('');
 
-const fetchPdfUrl = async (file_arsip) => {
+const fetchPdfUrl = async (file) => {
     try {
-        const response = await fetch(`/app/alihmedia/${file_arsip}`);
+        const response = await fetch(`/alihmedia/pdf/preview/${file}`);
         const blob = await response.blob();
         pdfUrl.value = URL.createObjectURL(blob);
     } catch (error) {
@@ -99,7 +99,8 @@ const fetchData = () => {
             // formData.file_arsip = res.data.file_arsip;
             formData.created_at = res.data.created_at;
             formData.updated_at = res.data.updated_at;
-            pdfUrl.value = "/api/getImage/" + res.data.file_arsip;
+            //pdfUrl.value = "/api/getImage/" + res.data.file_arsip;
+            fetchPdfUrl(res.data.file_arsip);
         })
         .catch((error) => {
             console.error("Error fetching data:", error);
@@ -125,7 +126,7 @@ onMounted(() => {
     if (props.id) fetchData();
     fetchKlasifikasi();
     fetchOPD();
-    fetchPdfUrl(formData.id);
+    //fetchPdfUrl(formData.id);
 });
 
 </script>

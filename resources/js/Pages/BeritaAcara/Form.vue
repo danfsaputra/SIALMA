@@ -49,20 +49,6 @@ const formState = {
 const errors = ref({});
 const formData = reactive({ ...formState });
 
-//const klasifikasi = ref([]);
-//const OPD = ref([]);
-
-/*const fetchKlasifikasi = async () => {
-    axios.get("api/getKlasifikasi").then((res) => {
-        klasifikasi.value = res.data;
-    });
-};
-
-const fetchOPD = async () => {
-    axios.get("api/getOPD").then((res) => {
-        OPD.value = res.data;
-    });
-};*/
 
 const jenisArsip = ref([
     { name: "Arsip Tekstual", id: "Arsip Tekstual" },
@@ -104,7 +90,7 @@ const fetchData = () => {
     axios
         .get(`/api/berita/getById/${props.id}`)
         .then((res) => {
-            const tgl_arsip = new Date(res.data.tgl_arsip);
+            const tanggal= new Date(res.data.tanggal);
 
             formData.id = res.data.id;
             formData.nomor_surat = res.data.nomor_surat;
@@ -124,21 +110,6 @@ const fetchData = () => {
             console.error("Error fetching data:", error);
         });
 };
-
-watchEffect(() => {
-    // if (props.items) {
-    //     const tgl_arsip = new Date(props.items.tgl_arsip);
-    //     formData.id = props.items.id;
-    //     formData.opd = props.items.opd;
-    //     formData.tgl_arsip = tgl_arsip.toLocaleDateString();
-    //     formData.jenis_arsip = props.items.jenis_arsip;
-    //     formData.klasifikasi_arsip = props.items.klasifikasi_arsip;
-    //     formData.uraian = props.items.uraian;
-    //     formData.no_box = props.items.no_box;
-    //     formData.no_berkas = props.items.no_berkas;
-    //     formData.keterangan = props.items.keterangan;
-    // }
-});
 
 onMounted(() => {
     if (props.id) fetchData();
@@ -171,7 +142,7 @@ onMounted(() => {
                         <label class="font-semibold required">Tanggal</label>
                         <Calendar
                             v-model="formData.tanggal"
-                            dateFormat="dd/mm/yy"
+                            dateFormat="yy/mm/dd"
                             iconDisplay="input"
                             showIcon
                             :invalid="errors?.tanggal ? true : false"

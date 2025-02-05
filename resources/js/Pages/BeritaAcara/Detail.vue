@@ -21,16 +21,16 @@ const formState = {
     proses: "",
     pelaksana: "",
     kepala_dinas: "",
-    file_arsip: "",
+    file_berita: "",
 };
 
 // const photoSource = ref('/app/alihmedia/$file');
 
-const pdfUrl = ref('/app/berita/${file_berita}');
+const pdfUrl = ref('');
 
-const fetchPdfUrl = async (file_berita) => {
+const fetchPdfUrl = async (file) => {
     try {
-        const response = await fetch(`/app/berita/${file_berita}`);
+        const response = await fetch(`/berita/pdf/preview/${file}`);
         const blob = await response.blob();
         pdfUrl.value = URL.createObjectURL(blob);
     } catch (error) {
@@ -49,11 +49,11 @@ const formData = reactive({ ...formState });
     });
 };*/
 
-const fetchOPD = async () => {
+/*const fetchOPD = async () => {
     axios.get("api/getOPD").then((res) => {
         OPD.value = res.data;
     });
-};
+};*/
 
 // const submitForm = async (data) => {
 //     try {
@@ -102,7 +102,8 @@ const fetchData = () => {
             // formData.file_arsip = res.data.file_arsip;
             formData.created_at = res.data.created_at;
             formData.updated_at = res.data.updated_at;
-            pdfUrl.value = "/api/getImage/" + res.data.file_berita;
+            //pdfUrl.value = "/api/getImage/" + res.data.file_berita;
+            fetchPdfUrl(res.data.file_berita);
         })
         .catch((error) => {
             console.error("Error fetching data:", error);
@@ -128,7 +129,7 @@ onMounted(() => {
     if (props.id) fetchData();
     //fetchKlasifikasi();
     //fetchOPD();
-    fetchPdfUrl(formData.id);
+    //fetchPdfUrl(formData.id);
 });
 
 </script>

@@ -49,19 +49,13 @@ class BeritaacaraController extends Controller
             // Mengambil dan membersihkan format tanggal
             $tanggal = $request->tanggal;
 
-            // Menghapus bagian setelah 'GMT' dan karakter yang tidak perlu
-            $cleanedDate = preg_replace('/(GMT[^\d]*\d{4})[^)]*/', '$1', $tanggal);
-            // Menghapus karakter penutup ')' yang tidak diperlukan
-            $cleanedDate = rtrim($cleanedDate, ')');
-
-            // Mengonversi tanggal yang sudah dibersihkan menjadi format yang diterima MySQL
-            $tanggal = Carbon::parse($cleanedDate)->toDateTimeString();
+            $tanggal= Carbon::parse($tanggal)->addDay();
 
             // Jika ada file baru, proses file baru
             if ($request->file_berita) {
                 // Validasi file ekstensi
                 $fileExtension = $request->photo_ext;
-                $validExtensions = ['pdf', 'jpg', 'jpeg', 'png', 'docx'];
+                $validExtensions = ['pdf'];
                 if (!in_array($fileExtension, $validExtensions)) {
                     return response()->json([
                         "success" => false,
@@ -150,16 +144,12 @@ class BeritaacaraController extends Controller
 
     public function getImage($file)
     {
-        $file = basename($file); // Hindari path traversal
-        $filePath = 'berita/' . $file;
+        $storagePath = storage_path('app/berita/' . $file);
 
-        if (Storage::exists($filePath)) {
-            return response()->file(storage_path('app/' . $filePath), [
-                'Content-Disposition' => 'inline; filename="' . $file . '"',
-                'Content-Type' => mime_content_type(storage_path('app/berita/' . $filePath)),
-            ]);
+        if (is_file($storagePath)) {
+            return response()->file($storagePath);
         } else {
-            abort(404, 'File tidak ditemukan');
+            die("Tidak Dapat Menampilkan Data");
         }
     }
 }

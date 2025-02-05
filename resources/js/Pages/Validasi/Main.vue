@@ -3,12 +3,15 @@ import { ref, onMounted, inject } from "vue";
 import { Link, router } from "@inertiajs/vue3";
 import axios from "axios";
 import AppLayout from "@/primevue/layout/AppLayout.vue";
+import useFormatter from "@/composables/formatter";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import InputText from "primevue/inputtext";
+import Avatar from 'primevue/avatar';
+import Tag from 'primevue/tag';
 
 const fetchedData = ref([]);
 const perPage = ref(10);
@@ -16,6 +19,8 @@ const totalItems = ref(0);
 const sortField = ref("id");
 const sortOrder = ref(-1);
 const search = ref("");
+
+const { formatNumber, formatDateTime } = useFormatter();
 
 const Swal = inject("$swal");
 const isVisible = ref(false);
@@ -35,10 +40,6 @@ const onSort = (event) => {
     fetchData();
 };
 
-// const openForm = () => {
-//     isVisible.value = true;
-// };
-
 const closeForm = () => {
     isVisible.value = false;
     fetchData();
@@ -48,7 +49,7 @@ const viewDetail = (id) => {
     router.visit("/validasi-detail", { method: "get", data: { id: id } });
 };
 
-const editForm = (id) => {
+/*const editForm = (id) => {
     router.visit("/alihmedia-form", { method: "get", data: { id: id } });
 };
 
@@ -74,7 +75,7 @@ const deleteData = (id) => {
             }
         }
     });
-};
+};*/
 
 // const fetchKlasifikasi = async () => {
 //     axios.get("api/getKlasifikasi").then((res) => {
@@ -173,8 +174,13 @@ onMounted(() => {
                             header="Tanggal Arsip"
                             class="w-25"
                             sortable
-                            dateFormat="dd/mm/yy"
+                            dateFormat="yy/mm/dd"
                         >
+                        <template #body="slotProps">
+                            <tag>
+                                {{  formatDateTime(slotProps.data.tgl_arsip) }}
+                            </tag>
+                        </template>
                         </Column>
                         <Column
                             field="no_arsip"

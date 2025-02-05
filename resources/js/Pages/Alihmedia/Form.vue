@@ -111,12 +111,12 @@ const fetchData = () => {
     axios
         .get(`/api/alihmedia/getById/${props.id}`)
         .then((res) => {
-            const tgl_arsip = new Date(res.data.tgl_arsip);
+            const tgl_arsip = new Date(res.data.tgl_arsip); // Mengonversi ke format JavaScript Date
 
             formData.id = res.data.id;
             formData.opd = res.data.opd;
             formData.jenis_arsip = res.data.jenis_arsip;
-            formData.tgl_arsip = res.data.tgl_arsip;
+            formData.tgl_arsip = res.data.tgl_arsip
             formData.no_arsip = res.data.no_arsip;
             formData.uraian = res.data.uraian;
             formData.keterangan = res.data.keterangan;
@@ -125,27 +125,12 @@ const fetchData = () => {
             formData.no_berkas = res.data.no_berkas;
             formData.status = res.data.status;
             formData.file_arsip = res.data.file_arsip;
-            // photoSource.value = "api/alihmedia/image/" + props.data.file_arsip;
         })
         .catch((error) => {
             console.error("Error fetching data:", error);
         });
 };
 
-watchEffect(() => {
-    // if (props.items) {
-    //     const tgl_arsip = new Date(props.items.tgl_arsip);
-    //     formData.id = props.items.id;
-    //     formData.opd = props.items.opd;
-    //     formData.tgl_arsip = tgl_arsip.toLocaleDateString();
-    //     formData.jenis_arsip = props.items.jenis_arsip;
-    //     formData.klasifikasi_arsip = props.items.klasifikasi_arsip;
-    //     formData.uraian = props.items.uraian;
-    //     formData.no_box = props.items.no_box;
-    //     formData.no_berkas = props.items.no_berkas;
-    //     formData.keterangan = props.items.keterangan;
-    // }
-});
 
 onMounted(() => {
     if (props.id) fetchData();
@@ -196,12 +181,13 @@ onMounted(() => {
                         <div class="flex gap-2 flex-column">
                             <label class="font-semibold required">Tanggal Arsip</label>
                             <Calendar
-                                v-model="formData.tgl_arsip"
-                                dateFormat="dd/mm/yy"
-                                iconDisplay="input"
-                                showIcon
-                                :invalid="errors?.tgl_arsip ? true : false"
-                            />
+                            v-model="formData.tgl_arsip"
+                            dateFormat="yy-mm-dd"  
+                            iconDisplay="input"
+                            showIcon
+                            :invalid="errors?.tgl_arsip ? true : false"
+                        />
+
                             <small v-if="errors?.tgl_arsip">{{ errors.tgl_arsip[0] }}</small>
                         </div>
                     </div>

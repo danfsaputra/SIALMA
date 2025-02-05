@@ -10,8 +10,6 @@ import Button from "primevue/button";
 import IconField from "primevue/iconfield";
 import InputIcon from "primevue/inputicon";
 import InputText from "primevue/inputtext";
-import Avatar from 'primevue/avatar';
-import Tag from 'primevue/tag';
 
 const fetchedData = ref([]);
 const perPage = ref(10);
@@ -19,7 +17,6 @@ const totalItems = ref(0);
 const sortField = ref("id");
 const sortOrder = ref(-1);
 const search = ref("");
-
 const { formatNumber, formatDateTime } = useFormatter();
 
 const Swal = inject("$swal");
@@ -40,49 +37,26 @@ const onSort = (event) => {
     fetchData();
 };
 
+// const openForm = () => {
+//     isVisible.value = true;
+// };
+
 const closeForm = () => {
     isVisible.value = false;
     fetchData();
 };
 
 const viewDetail = (id) => {
-    router.visit("/berita-detail", { method: "get", data: { id: id } });
-};
-
-const editForm = (id) => {
-    router.visit("/berita-form", { method: "get", data: { id: id } });
-};
-
-const deleteData = (id) => {
-    Swal({
-        icon: "question",
-        text: "Anda yakin menghapus data ini ?",
-        showCancelButton: true,
-        cancelButtonText: "Batal",
-    }).then(async (result) => {
-        if (result.isConfirmed) {
-            try {
-                await axios.get("/sanctum/csrf-cookie");
-
-                axios
-                    .post("/api/berita/destroy/" + id)
-                    .then((res) => {
-                        Swal("", res.data.message, "success");
-                    })
-                    .finally(() => fetchData());
-            } catch (err) {
-                console.log(err);
-            }
-        }
-    });
+    router.visit("/jenis-detail", { method: "get", data: {id:id} });
 };
 
 const fetchData = () => {
     axios
         .get(
-            `/api/berita?page=${currentPage}&perPage=${perPage.value}&sortField=${sortField.value}&sortOrder=${sortOrder.value}&search=${search.value}`
+            `/api/jenis?page=${currentPage}&perPage=${perPage.value}&sortField=${sortField.value}&sortOrder=${sortOrder.value}&search=${search.value}`
         )
         .then((response) => {
+            console.log("Data fetched:", response.data); // Debugging
             fetchedData.value = response.data.data;
             totalItems.value = response.data.total;
         })
@@ -103,7 +77,7 @@ onMounted(() => {
                 <div class="card">
                     <div class="flex flex-wrap mb-4 md:flex-nowrap">
                         <div class="w-full mb-3 md:mb-0">
-                            <Link :href="route('berita-form')">
+                            <Link :href="route('alihmedia-form')">
                                 <Button
                                     type="button"
                                     label="Tambah"
@@ -156,65 +130,79 @@ onMounted(() => {
                                 text
                             />
                         </template>
+
                         <Column
-                            field="nomor_surat"
-                            header="Nomor Surat"
-                            sortable
+                            field="id"
+                            header="Nomor ID"
+                            :style="{ width: '150px'}"
                         ></Column>
+
+
                         <Column
-                            field="tanggal"
-                            header="Tanggal"
+                            field="nm_arsip"
+                            header="Jenis Arsip"
+                            class="w-25"
                             sortable
-                            dateFormat="yy/mm/dd"
                         >
-                        <template #body="slotProps">
-                            <tag>
-                                {{  formatDateTime(slotProps.data.tanggal) }}
-                            </tag>
+                            <template #body="slotProps">
+                            <div class="flex">
+                                <div>
+                                    <h6 class="font-semibold">
+                                        {{ slotProps.data.nm_arsip }}
+                                    </h6>
+                                    <!-- <p class="pt-1 text-sm font-bold"></p> -->
+                                    <p class="text-sm text-slate-400">Dibuat pada: {{  formatDateTime(slotProps.data.updated_at) }}</p>
+                                    <!-- <p class="pt-1 text-sm font-bold">Dirubah terakhir pada:</p>
+                                    <p class="text-sm text-slate-400">{{ slotProps.data.updated_at }}</p> -->
+                                </div>
+                            </div>
                         </template>
                         </Column>
+                        <!-- <Column
+                            field="retensi_aktif"
+                            header="Retensi Aktif (tahun)"
+                            class="w-25"
+                            sortable
+                        >
+                        </Column>
                         <Column
-                            field="jenis_media"
-                            header="Jenis Media"
+                            field="retensi_inaktif"
+                            header="Retensi Inaktif (tahun)"
                         ></Column>
                         <Column
-                            field="jumlah_arsip"
-                            header="Jumlah Arsip"
+                            field="penyusutan_akhir"
+                            header="Penyusutan Akhir"
                         ></Column>
                         <Column
-                            field="keterangan_arsip"
-                            header="Keterangan Arsip"
+                            field="hak_akses"
+                            header="Hak Akses"
                         ></Column>
                         <Column
-                            field="pelaksana"
-                            header="Pelaksana"
+                            field="klas_keamanan"
+                            header="Klasifikasi Keamanan"
+                        ></Column> 
+                        <Column
+                            field="status"
+                            header="Status"
+                            sortable
+                        ></Column> -->
+                        <!-- <Column
+                            field="no_berkas"
+                            header="Nomor Berkas"
+                            sortable
                         ></Column>
                         <Column
-                            field="kepala_dinas"
-                            header="Kepala Dinas"
-                        ></Column>
+                            field="keterangan"
+                            header="Keterangan"
+                        ></Column> -->
                         <Column header="Aksi">
                             <template #body="slotProps">
-                                <Button
-                                    icon="pi pi-pencil"
-                                    severity="info"
-                                    rounded
-                                    outlined
-                                    @click="editForm(slotProps.data.id)"
-                                />
                                 <Button
                                     icon="pi pi-file"
                                     severity="info"
                                     rounded
                                     outlined
-                                    @click="viewDetail(slotProps.data.id)"
-                                />
-                                <Button
-                                    icon="pi pi-trash"
-                                    severity="danger"
-                                    rounded
-                                    outlined
-                                    @click="deleteData(slotProps.data.id)"
+                                    @click="() => viewDetail(slotProps.data.id)"
                                 />
                             </template>
                         </Column>

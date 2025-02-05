@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Validasidata;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ValidasidataController extends Controller
 {
@@ -83,7 +84,7 @@ class ValidasidataController extends Controller
 
     public function getImage($file)
     {
-        $storagePath = storage_path('app/alihmedia/' . $file);
+        $storagePath = storage_path('app/alma/' . $file);
 
         if (is_file($storagePath)) {
             return response()->file($storagePath);

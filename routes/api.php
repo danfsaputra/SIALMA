@@ -11,14 +11,29 @@ use App\Http\Controllers\API\BeritaacaraController;
 use App\Http\Controllers\API\DaftararsipController;
 use App\Http\Controllers\API\HakaksesController;
 use App\Http\Controllers\API\KeamananController;
+use App\Http\Controllers\API\PenyusutanController;
+use App\Http\Controllers\API\JenisarsipController;
+use App\Models\BeritaAcara;
+use App\Models\Alihmedia;
+use App\Models\Validasidata;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Rute untuk file image dan pdf
-Route::get('alihmedia/image/{file}', [AlihmediaController::class, 'getImage']);
-Route::get('alihmedia/pdf/{file}', [AlihmediaController::class, 'getPdf']);
+//Route::get('alihmedia/image/{file}', [AlihmediaController::class, 'image']);
+
+//Route::get('/getimage/{file}', [AlihmediaController::class, 'getImage']);
+//Route::get('/getImage/{file}', [ValidasidataController::class, 'getImage']);
+//Route::get('/getImage/{file}', [ValidasidataController::class, 'getImage']);
+
+//Route::get('/app/alihmedia/{id}', [AlihmediaController::class, 'getPdf']);
+
+//Route::get('berita/image/{file}', [BeritaacaraController::class, 'image']);
+
+//Route::get('/getImage/{file}', [BeritaacaraController::class, 'getImage']);;
+
+//Route::get('/app/berita/{id}', [BeritaAcaraController::class, 'getPdf']);
 
 // Referensi
 Route::get('getKlasifikasi', [ReferensiController::class, 'getKlasifikasi']);
@@ -40,6 +55,7 @@ Route::prefix('alihmedia')->group(function () {
     Route::get('/getById/{id}', [AlihmediaController::class, 'getById']);
     Route::post('/store', [AlihmediaController::class, 'store']);
     Route::post('/destroy/{id}', [AlihmediaController::class, 'destroy']);
+    Route::get('/getImage/{file}', [AlihmediaController::class, 'getImage']);
 });
 
 // Validasi Data
@@ -48,6 +64,7 @@ Route::prefix('validasidata')->group(function () {
     Route::get('/getById/{id}', [ValidasidataController::class, 'getById']);
     Route::post('/store', [ValidasidataController::class, 'store']);
     Route::post('/destroy/{id}', [ValidasidataController::class, 'destroy']);
+    Route::get('/getImage/{file}', [ValidasidataController::class, 'getImage']);
 });
 
 // Manajemen Akun
@@ -66,7 +83,7 @@ Route::prefix('berita')->group(function () {
     Route::get('/getById/{id}', [BeritaacaraController::class, 'getById']);
     Route::post('/store', [BeritaacaraController::class, 'store']);
     Route::post('/destroy/{id}', [BeritaacaraController::class, 'destroy']);
-    Route::get('/image/{file}', [BeritaacaraController::class, 'getImage']);
+    Route::get('/getImage/{file}', [BeritaAcaraController::class, 'getImage']);
 });
 
 // Daftar
@@ -92,3 +109,19 @@ Route::prefix('skkaad')->group(function () {
     Route::post('/store', [KeamananController::class, 'store']);
     Route::post('/destroy/{id}', [KeamananController::class, 'destroy']);
 });
+
+// Penyusutan
+Route::prefix('penyusutan')->group(function () {
+    Route::get('/', [PenyusutanController::class, 'getData']);
+    Route::get('/getById/{id}', [PenyusutanController::class, 'getById']);
+    Route::post('/store', [PenyusutanController::class, 'store']);
+    Route::post('/destroy/{id}', [PenyusutanController::class, 'destroy']);
+    });
+
+// Jenis
+Route::prefix('jenis')->group(function () {
+    Route::get('/', [JenisarsipController::class, 'getData']);
+    Route::get('/getById/{id}', [JenisarsipController::class, 'getById']);
+    Route::post('/store', [JenisarsipController::class, 'store']);
+    Route::post('/destroy/{id}', [JenisarsipController::class, 'destroy']);
+    });

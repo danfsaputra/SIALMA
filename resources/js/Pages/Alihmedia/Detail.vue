@@ -26,11 +26,11 @@ const formState = {
 
 // const photoSource = ref('/app/alihmedia/$file');
 
-const pdfUrl = ref('/app/alihmedia/${file_arsip}');
+const pdfUrl = ref('');
 
-const fetchPdfUrl = async (file_arsip) => {
+const fetchPdfUrl = async (file) => {
     try {
-        const response = await fetch(`/app/alihmedia/${file_arsip}`);
+        const response = await fetch(`/alihmedia/pdf/preview/${file}`);
         const blob = await response.blob();
         pdfUrl.value = URL.createObjectURL(blob);
     } catch (error) {
@@ -38,6 +38,7 @@ const fetchPdfUrl = async (file_arsip) => {
     }
 };
 
+const errors = ref({});
 const formData = reactive({ ...formState });
 
 const klasifikasi = ref([]);
@@ -92,17 +93,17 @@ const fetchData = () => {
             formData.id = res.data.id;
             formData.opd = res.data.opd;
             formData.jenis_arsip = res.data.jenis_arsip;
-            formData.tgl_arsip = tgl_arsip.toLocaleDateString();
+            formData.tgl_arsip = res.data.tgl_arsip;
             formData.no_arsip = res.data.no_arsip;
             formData.uraian = res.data.uraian;
             formData.keterangan = res.data.keterangan;
             formData.klasifikasi_arsip = res.data.klasifikasi_arsip;
             formData.no_box = res.data.no_box;
             formData.no_berkas = res.data.no_berkas;
-            // formData.file_arsip = res.data.file_arsip;
             formData.created_at = res.data.created_at;
             formData.updated_at = res.data.updated_at;
-            pdfUrl.value = "/api/getImage/" + res.data.file_arsip;
+            //pdfUrl.value = "/api/getImage/" + res.data.file_arsip;
+            fetchPdfUrl(res.data.file_arsip);
         })
         .catch((error) => {
             console.error("Error fetching data:", error);
@@ -128,7 +129,7 @@ onMounted(() => {
     if (props.id) fetchData();
     fetchKlasifikasi();
     fetchOPD();
-    fetchPdfUrl(formData.id);
+    //fetchPdfUrl(formData.id);
 });
 
 </script>

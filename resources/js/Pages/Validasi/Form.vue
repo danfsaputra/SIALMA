@@ -48,11 +48,11 @@ const formState = {
     photo_ext: "",
 };
 
-const pdfUrl = ref('/app/alihmedia/${file_arsip}');
+const pdfUrl = ref('');
 
-const fetchPdfUrl = async (file_arsip) => {
+const fetchPdfUrl = async (file) => {
     try {
-        const response = await fetch(`/app/alihmedia/${file_arsip}`);
+        const response = await fetch(`/alihmedia/pdf/preview${file}`);
         const blob = await response.blob();
         pdfUrl.value = URL.createObjectURL(blob);
     } catch (error) {
@@ -80,12 +80,12 @@ const fetchOPD = async () => {
 
 const jenisArsip = ref([
     { name: "Arsip Tekstual", id: "Arsip Tekstual" },
-    { name: "Arsip Foto", id: "Arsip Foto" },
-    { name: "Arsip kartografi dan kearsitekturan", id: "Arsip kartografi dan kearsitekturan" },
-    { name: "Arsip Video", id: "Arsip Video" },
-    { name: "Arsip Rekaman Suara", id: "Arsip Rekaman Suara" },
-    { name: "Arsip Poster", id: "Arsip Poster" },
-    { name: "Arsip suara", id: "Arsip suara" },
+    //{ name: "Arsip Foto", id: "Arsip Foto" },
+    //{ name: "Arsip kartografi dan kearsitekturan", id: "Arsip kartografi dan kearsitekturan" },
+    //{ name: "Arsip Video", id: "Arsip Video" },
+    //{ name: "Arsip Rekaman Suara", id: "Arsip Rekaman Suara" },
+    //{ name: "Arsip Poster", id: "Arsip Poster" },
+    //{ name: "Arsip suara", id: "Arsip suara" },
 ]);
 
 const jenisStatus = ref([
@@ -137,8 +137,9 @@ const fetchData = () => {
             formData.no_berkas = res.data.no_berkas;
             formData.status = res.data.status;
             // formData.file_arsip = res.data.file_arsip;
-            pdfUrl.value = "/api/getImage/" + res.data.file_arsip;
+            //pdfUrl.value = "/api/getImage/" + res.data.file_arsip;
             // photoSource.value = "api/alihmedia/image/" + props.data.file_arsip;
+            fetchPdfUrl(res.data.file_arsip);
         })
         .catch((error) => {
             console.error("Error fetching data:", error);
@@ -164,6 +165,7 @@ onMounted(() => {
     if (props.id) fetchData();
     fetchKlasifikasi();
     fetchOPD();
+    //fetchPdfUrl(formData.id);
 });
 </script>
 

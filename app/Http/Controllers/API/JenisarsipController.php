@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Penyusutan;
+use App\Models\Jenisarsip;
 use Illuminate\Http\Request;
 
 
-class PenyusutanController extends Controller
+class JenisarsipController extends Controller
 {
     public function getData(Request $request)
     {
@@ -18,7 +18,7 @@ class PenyusutanController extends Controller
         $sortOrder = $request->input('sortOrder') == 1 ? 'desc' : 'asc';
         $user = $request->user();
 
-        $data = Penyusutan::where('nm_penyusutan_akhir', 'like', '%' . $search . '%')
+        $data = Jenisarsip::where('nm_arsip', 'like', '%' . $search . '%')
             ->when($sortField, function ($query) use ($sortField, $sortOrder) {
                 $query->orderBy($sortField, $sortOrder);
             })

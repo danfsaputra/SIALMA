@@ -51,8 +51,8 @@ class AlihmediaStoreRequest extends FormRequest
             'no_box.required'               => 'Nomor Box harus diisi',
             'no_berkas.required'            => 'Nomor berkas harus diisi',
             'keterangan.required'           => 'Keterangan harus diisi',
-            //'status.required'               => 'Status harus diisi',
-            // 'file_arsip.required'           => 'File arsip harus diisi',
+            'status.required'               => 'Status harus diisi',
+            'file_arsip.required'           => 'File arsip harus diisi',
         ];
     }
 }
