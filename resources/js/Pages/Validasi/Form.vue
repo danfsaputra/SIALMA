@@ -45,19 +45,6 @@ const formState = {
     keterangan: "",
     status: "",
     file_arsip: "",
-    photo_ext: "",
-};
-
-const pdfUrl = ref('');
-
-const fetchPdfUrl = async (file) => {
-    try {
-        const response = await fetch(`/alihmedia/pdf/preview${file}`);
-        const blob = await response.blob();
-        pdfUrl.value = URL.createObjectURL(blob);
-    } catch (error) {
-        console.error('Error fetching PDF:', error);
-    }
 };
 
 const errors = ref({});
@@ -136,10 +123,10 @@ const fetchData = () => {
             formData.no_box = res.data.no_box;
             formData.no_berkas = res.data.no_berkas;
             formData.status = res.data.status;
-            // formData.file_arsip = res.data.file_arsip;
+            formData.file_arsip = res.data.file_arsip;
             //pdfUrl.value = "/api/getImage/" + res.data.file_arsip;
             // photoSource.value = "api/alihmedia/image/" + props.data.file_arsip;
-            fetchPdfUrl(res.data.file_arsip);
+            //fetchPdfUrl(res.data.file_arsip);
         })
         .catch((error) => {
             console.error("Error fetching data:", error);
@@ -192,14 +179,6 @@ onMounted(() => {
                         </div>
                     </div>
                 </div>
-
-                <div class="grid mb-3">
-                <div class="pb-0 col-12">
-                    <div class="flex flex-row gap-2">
-                            <iframe class="flex gap-3 p-3 mb-0 items-right card flex-column" :src="pdfUrl" width="100%" height="700vh"></iframe>
-                    </div>
-                </div>
-            </div>
 
                 <div class="flex justify-end gap-2">
                     <Link :href="route('validasi')">

@@ -12,6 +12,7 @@ import InputIcon from "primevue/inputicon";
 import InputText from "primevue/inputtext";
 import Avatar from 'primevue/avatar';
 import Tag from 'primevue/tag';
+import * as XLSX from "xlsx";
 
 const fetchedData = ref([]);
 const perPage = ref(10);
@@ -91,6 +92,78 @@ const fetchData = () => {
         });
 };
 
+const exportData = () => {
+    // Definisi header kolom
+    const headers = [
+        "No",
+        "Nomor Berita Acara",
+        "Tanggal Berita Acara",
+        "Jenis Media",
+        "Jumlah Arsip",
+        "Keterangan Arsip",
+        "Pelaksana"
+    ];
+
+    // Salin dan format data dari tabel
+    const dataToExport = fetchedData.value.map((item, index) => {
+        return {
+            'No': index + 1,
+            'Nomor Berita Acara': item.nomor_surat,
+            'Tanggal Berita Acara': formatDateTime(item.tanggal),
+            'Jenis Media': item.jenis_media,
+            'Jumlah Arsip': item.jumlah_arsip,
+            'Keterangan Arsip': item.keterangan_arsip,
+            'Pelaksana': item.pelaksana
+        };
+    });
+
+    // Buat worksheet
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport, {
+        header: headers
+    });
+
+    // Autosize columns
+    const range = XLSX.utils.decode_range(worksheet['!ref']);
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+        let max = 0;
+        const columnCells = [];
+
+        // Ambil semua nilai dalam kolom
+        for (let R = range.s.r; R <= range.e.r; ++R) {
+            const cell = worksheet[XLSX.utils.encode_cell({ r: R, c: C })];
+            if (cell && cell.v) columnCells.push(String(cell.v));
+        }
+
+        // Hitung lebar maksimum
+        columnCells.forEach(cell => {
+            const length = cell.toString().length;
+            if (length > max) max = length;
+        });
+
+        // Set lebar kolom
+        worksheet['!cols'] = worksheet['!cols'] || [];
+        worksheet['!cols'][C] = { wch: max + 2 }; // Tambah 2 untuk padding
+    }
+
+    // Styling untuk header
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+        const address = XLSX.utils.encode_col(C) + "1";
+        if (!worksheet[address]) continue;
+        worksheet[address].s = {
+            font: { bold: true },
+            alignment: { horizontal: "center" }
+        };
+    }
+
+    // Buat workbook dan tambahkan worksheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Data Berita Acara");
+
+    // Ekspor file dengan timestamp
+    const date = new Date().toISOString().split('T')[0];
+    XLSX.writeFile(workbook, `data_berita_acara${date}.xlsx`);
+};
+
 onMounted(() => {
     fetchData();
 });
@@ -154,13 +227,34 @@ onMounted(() => {
                                 icon="pi pi-download"
                                 severity="success"
                                 text
+                                @click="exportData"
                             />
                         </template>
                         <Column
                             field="nomor_surat"
                             header="Nomor Surat"
                             sortable
-                        ></Column>
+                        >
+                        <template #body="slotProps">
+                            <div class="flex">
+                                <Avatar
+                                    icon="pi pi-file-pdf"
+                                    class="mr-1"
+                                    size="xlarge"
+                                    style="background-color: aquamarine"
+                                />
+                                <div>
+                                    <h6 class="font-semibold">
+                                        {{ slotProps.data.nomor_surat }}
+                                    </h6>
+                                    <!-- <p class="pt-1 text-sm font-bold"></p> -->
+                                    <p class="mt-0 text-sm text-slate-400">Dibuat pada: {{  formatDateTime(slotProps.data.created_at) }}</p>
+                                    <!-- <p class="pt-1 text-sm font-bold">Dirubah terakhir pada:</p>
+                                    <p class="text-sm text-slate-400">{{ slotProps.data.updated_at }}</p> -->
+                                </div>
+                            </div>
+                        </template>
+                        </Column>
                         <Column
                             field="tanggal"
                             header="Tanggal"

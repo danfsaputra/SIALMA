@@ -24,8 +24,6 @@ const formState = {
     file_berita: "",
 };
 
-// const photoSource = ref('/app/alihmedia/$file');
-
 const pdfUrl = ref('');
 
 const fetchPdfUrl = async (file) => {
@@ -39,45 +37,6 @@ const fetchPdfUrl = async (file) => {
 };
 
 const formData = reactive({ ...formState });
-
-//const klasifikasi = ref([]);
-//const OPD = ref([]);
-
-/*const fetchKlasifikasi = async () => {
-    axios.get("api/getKlasifikasi").then((res) => {
-        klasifikasi.value = res.data;
-    });
-};*/
-
-/*const fetchOPD = async () => {
-    axios.get("api/getOPD").then((res) => {
-        OPD.value = res.data;
-    });
-};*/
-
-// const submitForm = async (data) => {
-//     try {
-//         await axios.get("/sanctum/csrf-cookie");
-
-//         axios
-//             .post("/api/alihmedia/store", data)
-//             .then((res) => {
-//                 if (res.data.success == true) {
-//                     Swal("", res.data.message, "success").then(() => {
-//                         return router.visit("/validasi", { method: "get", data: { id: res.data.id } });
-//                     });
-//                 }
-//             })
-//             .catch((err) => {
-//                 console.log(err);
-//                 if (err.response.status === 422) {
-//                     errors.value = err.response.data.errors;
-//                 }
-//             });
-//     } catch (err) {
-//         console.log(err);
-//     }
-// };
 
 const editForm = (id) => {
     router.visit("/berita-form", { method: "get", data: { id: id } });
@@ -109,21 +68,6 @@ const fetchData = () => {
             console.error("Error fetching data:", error);
         });
 };
-
-watchEffect(() => {
-    // if (props.items) {
-    //     const tgl_arsip = new Date(props.items.tgl_arsip);
-    //     formData.id = props.items.id;
-    //     formData.opd = props.items.opd;
-    //     formData.tgl_arsip = tgl_arsip.toLocaleDateString();
-    //     formData.jenis_arsip = props.items.jenis_arsip;
-    //     formData.klasifikasi_arsip = props.items.klasifikasi_arsip;
-    //     formData.uraian = props.items.uraian;
-    //     formData.no_box = props.items.no_box;
-    //     formData.no_berkas = props.items.no_berkas;
-    //     formData.keterangan = props.items.keterangan;
-    // }
-});
 
 onMounted(() => {
     if (props.id) fetchData();

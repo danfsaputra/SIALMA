@@ -50,6 +50,46 @@ const viewDetail = (id) => {
     router.visit("/penyusutan-detail", { method: "get", data: {id:id} });
 };
 
+const editForm = (id) => {
+    router.visit("/penyusutan-form", { method: "get", data: { id: id } });
+};
+
+const deleteData = (id) => {
+    Swal({
+        icon: "question",
+        text: "Anda yakin menghapus data ini ?",
+        showCancelButton: true,
+        cancelButtonText: "Batal",
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                await axios.get("/sanctum/csrf-cookie");
+                const response = await axios.post(`/api/penyusutan/destroy/${id}`);
+                
+                if (response.data.success) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Berhasil",
+                        text: response.data.message,
+                    });
+                    fetchData();
+                }
+            } catch (error) {
+                // Handle 422 and other errors
+                const errorMessage = error.response?.data?.message || 
+                    "Terjadi kesalahan saat menghapus data";
+                
+                Swal.fire({
+                    icon: "error",
+                    title: "Gagal",
+                    text: errorMessage,
+                });
+            }
+        }
+    });
+};
+
+
 const fetchData = () => {
     axios
         .get(
@@ -76,7 +116,7 @@ onMounted(() => {
                 <div class="card">
                     <div class="flex flex-wrap mb-4 md:flex-nowrap">
                         <div class="w-full mb-3 md:mb-0">
-                            <Link :href="route('alihmedia-form')">
+                            <Link :href="route('penyusutan-form')">
                                 <Button
                                     type="button"
                                     label="Tambah"
@@ -120,7 +160,7 @@ onMounted(() => {
                         <template #empty>
                             <p class="text-center">Data tidak ditemukan</p>
                         </template>
-                        <template #paginatorstart>
+                        <!--<template #paginatorstart>
                             <Button
                                 label="Export Data"
                                 type="button"
@@ -128,15 +168,13 @@ onMounted(() => {
                                 severity="success"
                                 text
                             />
-                        </template>
+                        </template>-->
 
                         <Column
                             field="id"
                             header="Nomor ID"
                             :style="{ width: '150px'}"
                         ></Column>
-
-
                         <Column
                             field="nm_penyusutan_akhir"
                             header="Penyusutan Akhir"
@@ -149,59 +187,33 @@ onMounted(() => {
                                     <h6 class="font-semibold">
                                         {{ slotProps.data.nm_penyusutan_akhir }}
                                     </h6>
-                                    <!-- <p class="pt-1 text-sm font-bold"></p> -->
                                     <p class="text-sm text-slate-400">Dibuat pada: {{  formatDateTime(slotProps.data.updated_at) }}</p>
-                                    <!-- <p class="pt-1 text-sm font-bold">Dirubah terakhir pada:</p>
-                                    <p class="text-sm text-slate-400">{{ slotProps.data.updated_at }}</p> -->
                                 </div>
                             </div>
                         </template>
                         </Column>
-                        <!-- <Column
-                            field="retensi_aktif"
-                            header="Retensi Aktif (tahun)"
-                            class="w-25"
-                            sortable
-                        >
-                        </Column>
-                        <Column
-                            field="retensi_inaktif"
-                            header="Retensi Inaktif (tahun)"
-                        ></Column>
-                        <Column
-                            field="penyusutan_akhir"
-                            header="Penyusutan Akhir"
-                        ></Column>
-                        <Column
-                            field="hak_akses"
-                            header="Hak Akses"
-                        ></Column>
-                        <Column
-                            field="klas_keamanan"
-                            header="Klasifikasi Keamanan"
-                        ></Column> 
-                        <Column
-                            field="status"
-                            header="Status"
-                            sortable
-                        ></Column> -->
-                        <!-- <Column
-                            field="no_berkas"
-                            header="Nomor Berkas"
-                            sortable
-                        ></Column>
-                        <Column
-                            field="keterangan"
-                            header="Keterangan"
-                        ></Column> -->
                         <Column header="Aksi">
                             <template #body="slotProps">
                                 <Button
+                                    icon="pi pi-pencil"
+                                    severity="info"
+                                    rounded
+                                    outlined
+                                    @click="editForm(slotProps.data.id)"
+                                />
+                                <!--<Button
                                     icon="pi pi-file"
                                     severity="info"
                                     rounded
                                     outlined
-                                    @click="() => viewDetail(slotProps.data.id)"
+                                    @click="viewDetail(slotProps.data.id)"
+                                />-->
+                                <Button
+                                    icon="pi pi-trash"
+                                    severity="danger"
+                                    rounded
+                                    outlined
+                                    @click="deleteData(slotProps.data.id)"
                                 />
                             </template>
                         </Column>

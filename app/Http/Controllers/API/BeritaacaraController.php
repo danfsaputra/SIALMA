@@ -19,7 +19,6 @@ class BeritaacaraController extends Controller
         $perPage = $request->input('perPage');
         $sortField = $request->input('sortField');
         $sortOrder = $request->input('sortOrder') == 1 ? 'asc' : 'desc';
-        $user = $request->user();
 
         $data = Beritaacara::query()
             ->when($search, function ($query) use ($search) {
@@ -36,80 +35,60 @@ class BeritaacaraController extends Controller
     }
 
     public function store(StoreRequest $request)
-    {
-        try {
-            $user = $request->user();
+{
+    try {
+        $beritaacara = Beritaacara::find($request->id);
+        $tanggal = $beritaacara ? $request->tanggal : Carbon::parse($request->tanggal)->addDay();
 
-            // Inisialisasi variabel untuk file baru
-            $fileName = null;
+        $fileName = $beritaacara->file_berita ?? null;
+        $fileExtension = $request->photo_ext;
 
-            // Ambil data model jika ada (untuk update)
-            $beritaacara = Beritaacara::find($request->id);
-
-            // Mengambil dan membersihkan format tanggal
-            $tanggal = $request->tanggal;
-
-            $tanggal= Carbon::parse($tanggal)->addDay();
-
-            // Jika ada file baru, proses file baru
-            if ($request->file_berita) {
-                // Validasi file ekstensi
-                $fileExtension = $request->photo_ext;
-                $validExtensions = ['pdf'];
-                if (!in_array($fileExtension, $validExtensions)) {
-                    return response()->json([
-                        "success" => false,
-                        "message" => "Ekstensi file tidak valid.",
-                    ], 400);
-                }
-
-                // Decode file base64
-                $fileData = base64_decode($request->file_berita, true);
-                $fileName = Str::uuid() . '.' . $fileExtension;
-
-                if ($fileData !== false) {
-                    // Pastikan file valid sebelum menyimpannya
-                    $disk = Storage::build([
-                        'driver' => 'local',
-                        'root' => storage_path('app/berita'),
-                    ]);
-
-                    $disk->put($fileName, $fileData);
-
-                    // Hapus file lama jika ada
-                    if ($beritaacara && $beritaacara->file_berita) {
-                        $disk->delete($beritaacara->file_berita);
-                    }
-                }
-            } else {
-                // Jika tidak ada file baru, gunakan file lama
-                $fileName = $beritaacara->file_berita ?? null;
+        if ($request->file_berita && !Str::contains($request->file_berita, 'undefined') && strlen($request->file_berita) > 100) {
+            $validExtensions = ['pdf'];
+            if (!in_array($fileExtension, $validExtensions)) {
+                return response()->json([
+                    "success" => false,
+                    "message" => "Ekstensi file tidak valid.",
+                ], 400);
             }
 
-            // Siapkan data untuk disimpan
-            $post_data = array_merge($request->except('file_berita', 'photo_ext'), [
-                "user_id" => $user->id,
-                'file_berita' => $fileName,
-                'tanggal' => $tanggal,  // Pastikan tgl_arsip juga disertakan
-            ]);
+            $fileData = base64_decode($request->file_berita, true);
+            $fileName = Str::uuid() . '.' . $fileExtension;
 
-            // Simpan data
-            $beritaacara = Beritaacara::updateOrCreate(["id" => $request->id], $post_data);
+            if ($fileData !== false) {
+                $disk = Storage::build([
+                    'driver' => 'local',
+                    'root' => storage_path('app/berita'),
+                ]);
 
-            return response()->json([
-                "success" => true,
-                "message" => "Berhasil menyimpan data!",
-                "id" => $beritaacara->id,
-            ]);
-        } catch (\Exception $e) {
-            // Tangkap dan log error jika ada exception
-            Log::error('Error pada penyimpanan data: ' . $e->getMessage());
-            return response()->json([
-                "success" => false,
-                "message" => "Terjadi kesalahan saat menyimpan data!",
-            ], 500);
+                $disk->put($fileName, $fileData);
+
+                if ($beritaacara && $beritaacara->file_berita) {
+                    $disk->delete($beritaacara->file_berita);
+                }
+            }
         }
+
+        $post_data = array_merge($request->except('file_berita'), [
+            'file_berita' => $fileName,
+            'tanggal' => $tanggal,
+        ]);
+
+        $beritaacara = Beritaacara::updateOrCreate(["id" => $request->id], $post_data);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Berhasil menyimpan data!",
+            "id" => $beritaacara->id,
+        ]);
+    } catch (\Exception $e) {
+        Log::error('Error pada penyimpanan data Berita Acara: ' . $e->getMessage());
+        return response()->json([
+            "success" => false,
+            "message" => "Terjadi kesalahan saat menyimpan data!",
+        ], 500);
     }
+}
 
     public function destroy($id)
     {

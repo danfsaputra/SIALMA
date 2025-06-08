@@ -21,9 +21,6 @@ class AlihmediaController extends Controller
         $user = $request->user();
 
         $data = Alihmedia::where('status', 'Belum Dikirim')
-            //->when($user->role !== 'Admin', function ($query) use ($user) {
-              //  $query->where('user_id', $user->id);
-            //})
             ->when($search, function ($query) use ($search) {
                 $query->where('opd', 'like', '%' . $search . '%')
                     ->orWhere('no_arsip', 'like', '%' . $search . '%')
@@ -38,82 +35,64 @@ class AlihmediaController extends Controller
     }
 
     public function store(StoreRequest $request)
-{
-    try {
-        $user = $request->user();
-
-        // Inisialisasi variabel untuk file baru
-        $fileName = null;
-
-        // Ambil data model jika ada (untuk update)
-        $alihmedia = Alihmedia::find($request->id);
-
-        // Mengambil dan membersihkan format tanggal
-        $tgl_arsip = $request->tgl_arsip;
-
-        // Pastikan tanggal dalam format yang benar menggunakan Carbon
-        $tgl_arsip = Carbon::parse($tgl_arsip)->addDay();
-        
-        // Jika ada file baru, proses file baru
-        if ($request->file_arsip) {
-            // Validasi file ekstensi
+    {
+        try {
+            $alihmedia = Alihmedia::find($request->id);
+            $tgl_arsip = $alihmedia ? $request->tgl_arsip : Carbon::parse($request->tgl_arsip)->addDay();
             $fileExtension = $request->photo_ext;
             $validExtensions = ['pdf'];
-            if (!in_array($fileExtension, $validExtensions)) {
+    
+            // Cek ekstensi valid
+            if ($fileExtension && !in_array($fileExtension, $validExtensions)) {
                 return response()->json([
                     "success" => false,
                     "message" => "Ekstensi file tidak valid.",
                 ], 400);
             }
-
-            // Decode file base64
-            $fileData = base64_decode($request->file_arsip, true);
-            $fileName = Str::uuid() . '.' . $fileExtension;
-
-            if ($fileData !== false) {
-                // Pastikan file valid sebelum menyimpannya
-                $disk = Storage::build([
-                    'driver' => 'local',
-                    'root' => storage_path('app/alma'),
-                ]);
-
-                $disk->put($fileName, $fileData);
-
-                // Hapus file lama jika ada
-                if ($alihmedia && $alihmedia->file_arsip) {
-                    $disk->delete($alihmedia->file_arsip);
+    
+            // Default pakai file lama
+            $fileName = $alihmedia->file_arsip ?? null;
+    
+            if ($request->file_arsip && !Str::contains($request->file_arsip, 'undefined') && strlen($request->file_arsip) > 100) {
+                $fileData = base64_decode($request->file_arsip, true);
+                $fileName = Str::uuid() . '.' . $fileExtension;
+    
+                if ($fileData !== false) {
+                    $disk = Storage::build([
+                        'driver' => 'local',
+                        'root' => storage_path('app/alma'),
+                    ]);
+    
+                    $disk->put($fileName, $fileData);
+    
+                    // Hapus file lama
+                    if ($alihmedia && $alihmedia->file_arsip) {
+                        $disk->delete($alihmedia->file_arsip);
+                    }
                 }
             }
-        } else {
-            // Jika tidak ada file baru, gunakan file lama
-            $fileName = $alihmedia->file_arsip ?? null;
+    
+            $post_data = array_merge($request->except('file_arsip', 'tgl_arsip'), [
+                'file_arsip' => $fileName,
+                'tgl_arsip' => $tgl_arsip,
+            ]);
+    
+            $alihmedia = Alihmedia::updateOrCreate(["id" => $request->id], $post_data);
+    
+            return response()->json([
+                "success" => true,
+                "message" => "Berhasil menyimpan data!",
+                "id" => $alihmedia->id,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error pada penyimpanan data: ' . $e->getMessage());
+            return response()->json([
+                "success" => false,
+                "message" => "Terjadi kesalahan saat menyimpan data!",
+            ], 500);
         }
-
-        // Siapkan data untuk disimpan
-        $post_data = array_merge($request->except('file_arsip'), [
-            "user_id" => $user->id,
-            'file_arsip' => $fileName,
-            'tgl_arsip' => $tgl_arsip,  // Pastikan tgl_arsip juga disertakan
-        ]);
-
-        // Simpan data
-        $alihmedia = Alihmedia::updateOrCreate(["id" => $request->id], $post_data);
-
-        return response()->json([
-            "success" => true,
-            "message" => "Berhasil menyimpan data!",
-            "id" => $alihmedia->id,
-        ]);
-    } catch (\Exception $e) {
-        // Tangkap dan log error jika ada exception
-        Log::error('Error pada penyimpanan data: ' . $e->getMessage());
-        return response()->json([
-            "success" => false,
-            "message" => "Terjadi kesalahan saat menyimpan data!",
-        ], 500);
     }
-}
-
+    
 
     public function destroy($id)
     {

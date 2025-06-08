@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Klasifikasi;
 use App\Models\OPD;
+use App\Models\Hakakses;
+use App\Models\Keamanan;
+use App\Models\Penyusutan;
 use Illuminate\Http\Request;
 
 
@@ -35,6 +38,45 @@ class ReferensiController extends Controller
         #$opd = OPD::where('id', $user->departments_id)->get();
 
         #return response()->json($opd);
+    }
+
+    public function getHakakses()
+    {
+        try {
+            $hakakses = Hakakses::all();
+            return response()->json($hakakses);
+        } catch (\Exception $e) {
+            return response()->json([
+                "success" => false,
+                "message" => "Gagal memuat data hak akses!",
+            ], 500);
+        }
+    }
+
+    public function getKeamanan()
+    {
+        try {
+            $keamanan = Keamanan::all();
+            return response()->json($keamanan);
+        } catch (\Exception $e) {
+            return response()->json([
+                "success" => false,
+                "message" => "Gagal memuat data hak akses!",
+            ], 500);
+        }
+    }
+
+    public function getPenyusutan()
+    {
+        try {
+            $penyusutan = Penyusutan::all();
+            return response()->json($penyusutan);
+        } catch (\Exception $e) {
+            return response()->json([
+                "success" => false,
+                "message" => "Gagal memuat data hak akses!",
+            ], 500);
+        }
     }
 
     // public function getDesa($id)

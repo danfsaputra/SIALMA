@@ -37,10 +37,6 @@ const onSort = (event) => {
     fetchData();
 };
 
-// const openForm = () => {
-//     isVisible.value = true;
-// };
-
 const closeForm = () => {
     isVisible.value = false;
     fetchData();
@@ -50,11 +46,33 @@ const viewDetail = (id) => {
     router.visit("/klasifikasi-detail", { method: "get", data: {nm_klasifikasi: nm_klasifikasi } });
 };
 
-// const fetchKlasifikasi = async () => {
-//     axios.get("api/getKlasifikasi").then((res) => {
-//         klasifikasi.value = res.data;
-//     });
-// };
+const editForm = (id) => {
+    router.visit("/klasifikasi-form", { method: "get", data: { id: id } });
+};
+
+const deleteData = (id) => {
+    Swal({
+        icon: "question",
+        text: "Anda yakin menghapus data ini ?",
+        showCancelButton: true,
+        cancelButtonText: "Batal",
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                await axios.get("/sanctum/csrf-cookie");
+
+                axios
+                    .post("/api/klasifikasi/destroy/" + id)
+                    .then((res) => {
+                        Swal("", res.data.message, "success");
+                    })
+                    .finally(() => fetchData());
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    });
+};
 
 const fetchData = () => {
     axios
@@ -82,7 +100,7 @@ onMounted(() => {
                 <div class="card">
                     <div class="flex flex-wrap mb-4 md:flex-nowrap">
                         <div class="w-full mb-3 md:mb-0">
-                            <Link :href="route('alihmedia-form')">
+                            <Link :href="route('klasifikasi-form')">
                                 <Button
                                     type="button"
                                     label="Tambah"
@@ -126,7 +144,7 @@ onMounted(() => {
                         <template #empty>
                             <p class="text-center">Data tidak ditemukan</p>
                         </template>
-                        <template #paginatorstart>
+                        <!--<template #paginatorstart>
                             <Button
                                 label="Export Data"
                                 type="button"
@@ -134,7 +152,7 @@ onMounted(() => {
                                 severity="success"
                                 text
                             />
-                        </template>
+                        </template>-->
                         <Column
                             field="nm_klasifikasi"
                             header="Nama Klasifikasi"
@@ -147,10 +165,7 @@ onMounted(() => {
                                     <h6 class="font-semibold">
                                         {{ slotProps.data.nm_klasifikasi }}
                                     </h6>
-                                    <!-- <p class="pt-1 text-sm font-bold"></p> -->
                                     <p class="text-sm text-slate-400">Dibuat pada: {{  formatDateTime(slotProps.data.updated_at) }}</p>
-                                    <!-- <p class="pt-1 text-sm font-bold">Dirubah terakhir pada:</p>
-                                    <p class="text-sm text-slate-400">{{ slotProps.data.updated_at }}</p> -->
                                 </div>
                             </div>
                         </template>
@@ -183,23 +198,28 @@ onMounted(() => {
                             header="Status"
                             sortable
                         ></Column>
-                        <!-- <Column
-                            field="no_berkas"
-                            header="Nomor Berkas"
-                            sortable
-                        ></Column>
-                        <Column
-                            field="keterangan"
-                            header="Keterangan"
-                        ></Column> -->
                         <Column header="Aksi">
                             <template #body="slotProps">
                                 <Button
+                                    icon="pi pi-pencil"
+                                    severity="info"
+                                    rounded
+                                    outlined
+                                    @click="editForm(slotProps.data.id)"
+                                />
+                                <!--<Button
                                     icon="pi pi-file"
                                     severity="info"
                                     rounded
                                     outlined
-                                    @click="() => viewDetail(slotProps.data.nm_klasifikasi)"
+                                    @click="viewDetail(slotProps.data.id)"
+                                />-->
+                                <Button
+                                    icon="pi pi-trash"
+                                    severity="danger"
+                                    rounded
+                                    outlined
+                                    @click="deleteData(slotProps.data.id)"
                                 />
                             </template>
                         </Column>

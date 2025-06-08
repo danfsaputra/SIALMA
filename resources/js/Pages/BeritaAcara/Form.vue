@@ -103,8 +103,8 @@ const fetchData = () => {
             formData.pelaksana = res.data.pelaksana;
             formData.kepala_dinas = res.data.kepala_dinas;
             formData.file_berita = res.data.file_berita;
-            //formData.file_arsip = res.data.file_arsip;
-            // photoSource.value = "api/alihmedia/image/" + props.data.file_arsip;
+            formData.photo_ext = "pdf"; 
+            photoSource.value = `data:application/pdf;base64,${res.data.file_berita}`;
         })
         .catch((error) => {
             console.error("Error fetching data:", error);
@@ -112,9 +112,9 @@ const fetchData = () => {
 };
 
 onMounted(() => {
-    if (props.id) fetchData();
-    //fetchKlasifikasi();
-   // fetchOPD();
+    if (props.id) {
+        fetchData(props.id);
+    }
 });
 </script>
 

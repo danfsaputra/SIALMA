@@ -33,7 +33,7 @@ class AlihmediaStoreRequest extends FormRequest
             'no_box'            => 'required',
             'no_berkas'         => 'required',
             'keterangan'        => 'required',
-            //'status'            => 'required',
+            'status'            => 'required',
             'file_arsip'        => 'required',
             //'file_arsip'        => $file_rules,
         ];

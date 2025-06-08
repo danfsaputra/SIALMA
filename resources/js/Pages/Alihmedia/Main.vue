@@ -12,6 +12,7 @@ import InputIcon from "primevue/inputicon";
 import InputText from "primevue/inputtext";
 import Avatar from 'primevue/avatar';
 import Tag from 'primevue/tag';
+import * as XLSX from "xlsx";
 
 const fetchedData = ref([]);
 const perPage = ref(10);
@@ -77,12 +78,6 @@ const deleteData = (id) => {
     });
 };
 
-// const fetchKlasifikasi = async () => {
-//     axios.get("api/getKlasifikasi").then((res) => {
-//         klasifikasi.value = res.data;
-//     });
-// };
-
 const fetchData = () => {
     axios
         .get(
@@ -95,6 +90,78 @@ const fetchData = () => {
         .catch((error) => {
             console.error("Error fetching data:", error);
         });
+};
+
+const exportData = () => {
+    // Definisi header kolom
+    const headers = [
+        "No",
+        "OPD",
+        "Tanggal Arsip",
+        "Nomor Arsip",
+        "Jenis Arsip",
+        "Klasifikasi Arsip",
+        "Uraian"
+    ];
+
+    // Salin dan format data dari tabel
+    const dataToExport = fetchedData.value.map((item, index) => {
+        return {
+            'No': index + 1,
+            'OPD': item.opd,
+            'Tanggal Arsip': formatDateTime(item.tgl_arsip),
+            'Nomor Arsip': item.no_arsip,
+            'Jenis Arsip': item.jenis_arsip,
+            'Klasifikasi Arsip': item.klasifikasi_arsip,
+            'Uraian': item.uraian
+        };
+    });
+
+    // Buat worksheet
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport, {
+        header: headers
+    });
+
+    // Autosize columns
+    const range = XLSX.utils.decode_range(worksheet['!ref']);
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+        let max = 0;
+        const columnCells = [];
+
+        // Ambil semua nilai dalam kolom
+        for (let R = range.s.r; R <= range.e.r; ++R) {
+            const cell = worksheet[XLSX.utils.encode_cell({ r: R, c: C })];
+            if (cell && cell.v) columnCells.push(String(cell.v));
+        }
+
+        // Hitung lebar maksimum
+        columnCells.forEach(cell => {
+            const length = cell.toString().length;
+            if (length > max) max = length;
+        });
+
+        // Set lebar kolom
+        worksheet['!cols'] = worksheet['!cols'] || [];
+        worksheet['!cols'][C] = { wch: max + 2 }; // Tambah 2 untuk padding
+    }
+
+    // Styling untuk header
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+        const address = XLSX.utils.encode_col(C) + "1";
+        if (!worksheet[address]) continue;
+        worksheet[address].s = {
+            font: { bold: true },
+            alignment: { horizontal: "center" }
+        };
+    }
+
+    // Buat workbook dan tambahkan worksheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Data Arsip Antrean");
+
+    // Ekspor file dengan timestamp
+    const date = new Date().toISOString().split('T')[0];
+    XLSX.writeFile(workbook, `data_arsip_antrean${date}.xlsx`);
 };
 
 onMounted(() => {
@@ -160,6 +227,7 @@ onMounted(() => {
                                 icon="pi pi-download"
                                 severity="success"
                                 text
+                                @click="exportData"
                             />
                         </template>
                         <Column
@@ -216,20 +284,6 @@ onMounted(() => {
                             field="uraian"
                             header="Uraian Arsip"
                         ></Column>
-                        <!-- <Column
-                            field="no_box"
-                            header="Nomor Box"
-                            sortable
-                        ></Column>
-                        <Column
-                            field="no_berkas"
-                            header="Nomor Berkas"
-                            sortable
-                        ></Column>
-                        <Column
-                            field="keterangan"
-                            header="Keterangan"
-                        ></Column> -->
                         <Column header="Aksi">
                             <template #body="slotProps">
                                 <Button

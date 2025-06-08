@@ -52,6 +52,10 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('Klasifikasi/Detail', ['title' => 'Detail Klasifikasi', 'submenu' => 'Master Data', 'nm_klasifikasi' => $request->nm_klasifikasi]);
     })->name('klasifikasi-detail');
 
+    Route::get('/klasifikasi-form', function (Request $request) {
+        return Inertia::render('Klasifikasi/Form', ['title' => 'Form Klasifikasi', 'submenu' => 'Master Data', 'id' => $request->id]);
+    })->name('klasifikasi-form');
+
     //Validasi data
     Route::post('/validasidata/{id}', [ValidasidataController::class, 'store'])->name('store');
 
@@ -68,28 +72,6 @@ Route::middleware('auth')->group(function () {
     })->name('validasi-form');
 
     Route::get('/validasi/pdf/preview/{file}', [ValidasidataController::class, 'getImage']);
-
-
-    // Klasifikasi
-    Route::get('/sarpras', function () {
-        return Inertia::render('Sata/Sarpras/Main', ['title' => 'Sarana Prasarana', 'submenu' => 'Satu Data']);
-    });
-
-    // Pelanggaran
-    Route::get('/pelanggaran', function () {
-        return Inertia::render('Trantibum/Pelanggaran/Main', ['title' => 'Pelanggaran', 'submenu' => 'Trantibum']);
-    });
-
-    // Manajemen Akun
-    Route::get('/akun', function () {
-        return Inertia::render('Pengaturan/Akun/Main', ['title' => 'Manajemen Akun', 'submenu' => 'Pengaturan']);
-    });
-
-    Route::get('/ganti-password', function (Request $request) {
-        $user = $request->user();
-
-        return Inertia::render('Pengaturan/Akun/ChangePassword', ['title' => 'Ganti Password', 'submenu' => 'Pengaturan', 'items' => $user]);
-    });
 
     // Berita Acara
     Route::get('/berita', function () {
@@ -123,11 +105,11 @@ Route::middleware('auth')->group(function () {
     })->name('hak');
 
     Route::get('/hak-detail', function (Request $request) {
-        return Inertia::render('HakAkses/Detail', ['title' => 'Detail Hak Akses', 'submenu' => 'Pengaturan', 'id' => $request->id]);
+        return Inertia::render('HakAkses/Detail', ['title' => 'Detail Hak Akses', 'submenu' => 'Master Data', 'id' => $request->id]);
     })->name('hak-detail');
 
     Route::get('/hak-form', function (Request $request) {
-        return Inertia::render('HakAkses/Form', ['title' => 'Form Hak Akses', 'submenu' => 'Pengaturan', 'id' => $request->id]);
+        return Inertia::render('HakAkses/Form', ['title' => 'Form Hak Akses', 'submenu' => 'Master Data', 'id' => $request->id]);
     })->name('hak-form');
 
     // SKKAAD
@@ -169,6 +151,48 @@ Route::middleware('auth')->group(function () {
     Route::get('/jenis-form', function (Request $request) {
         return Inertia::render('Jenisarsip/Form', ['title' => 'Form Jenis Arsip', 'submenu' => 'Master Data', 'id' => $request->id]);
     })->name('jenis-form');
+
+        // Klasifikasi
+    Route::get('/sarpras', function () {
+        return Inertia::render('Sata/Sarpras/Main', ['title' => 'Sarana Prasarana', 'submenu' => 'Satu Data']);
+    });
+
+    // Pelanggaran
+    Route::get('/pelanggaran', function () {
+        return Inertia::render('Trantibum/Pelanggaran/Main', ['title' => 'Pelanggaran', 'submenu' => 'Trantibum']);
+    });
+
+    // Manajemen Akun
+    Route::get('/akun', function () {
+        return Inertia::render('Pengaturan/Akun/Main', ['title' => 'Manajemen Akun', 'submenu' => 'Pengaturan']);
+    });
+
+    Route::get('/ganti-password', function (Request $request) {
+        $user = $request->user();
+
+        return Inertia::render('Pengaturan/Akun/ChangePassword', ['title' => 'Ganti Password', 'submenu' => 'Pengaturan', 'items' => $user]);
+    });
+
+    // Klasifikasi
+    Route::get('/sarpras', function () {
+        return Inertia::render('Sata/Sarpras/Main', ['title' => 'Sarana Prasarana', 'submenu' => 'Satu Data']);
+    });
+
+    // Pelanggaran
+    Route::get('/pelanggaran', function () {
+        return Inertia::render('Trantibum/Pelanggaran/Main', ['title' => 'Pelanggaran', 'submenu' => 'Trantibum']);
+    });
+
+    // Manajemen Akun
+    Route::get('/akun', function () {
+        return Inertia::render('Pengaturan/Akun/Main', ['title' => 'Manajemen Akun', 'submenu' => 'Pengaturan']);
+    });
+
+    Route::get('/ganti-password', function (Request $request) {
+        $user = $request->user();
+
+        return Inertia::render('Pengaturan/Akun/ChangePassword', ['title' => 'Ganti Password', 'submenu' => 'Pengaturan', 'items' => $user]);
+    });
 });
 
 require __DIR__ . '/auth.php';

@@ -153,7 +153,7 @@ onMounted(() => {
                         <template #empty>
                             <p class="text-center">Data tidak ditemukan</p>
                         </template>
-                        <template #paginatorstart>
+                        <!--<template #paginatorstart>
                             <Button
                                 label="Export Data"
                                 type="button"
@@ -161,13 +161,32 @@ onMounted(() => {
                                 severity="success"
                                 text
                             />
-                        </template>
+                        </template>-->
                         <Column
                             field="opd"
                             header="OPD"
                             class="w-25"
                             sortable
                         >
+                        <template #body="slotProps">
+                            <div class="flex">
+                                <Avatar
+                                    icon="pi pi-file-pdf"
+                                    class="mr-1"
+                                    size="xlarge"
+                                    style="background-color: aquamarine"
+                                />
+                                <div>
+                                    <h6 class="font-semibold">
+                                        {{ slotProps.data.opd }}
+                                    </h6>
+                                    <!-- <p class="pt-1 text-sm font-bold"></p> -->
+                                    <p class="mt-0 text-sm text-slate-400">Dikirim pada: {{  formatDateTime(slotProps.data.updated_at) }}</p>
+                                    <!-- <p class="pt-1 text-sm font-bold">Dirubah terakhir pada:</p>
+                                    <p class="text-sm text-slate-400">{{ slotProps.data.updated_at }}</p> -->
+                                </div>
+                            </div>
+                        </template>
                         </Column>
                         <Column
                             field="tgl_arsip"
@@ -176,11 +195,6 @@ onMounted(() => {
                             sortable
                             dateFormat="yy/mm/dd"
                         >
-                        <template #body="slotProps">
-                            <tag>
-                                {{  formatDateTime(slotProps.data.tgl_arsip) }}
-                            </tag>
-                        </template>
                         </Column>
                         <Column
                             field="no_arsip"

@@ -45,7 +45,6 @@ const formState = {
     keterangan: "",
     status: "",
     file_arsip: "",
-    photo_ext: "",
 };
 
 const errors = ref({});
@@ -54,7 +53,7 @@ const formData = reactive({ ...formState });
 const klasifikasi = ref([]);
 const OPD = ref([]);
 
-const fetchKlasifikasi = async () => {
+const fetchklasifikasi = async () => {
     axios.get("api/getKlasifikasi").then((res) => {
         klasifikasi.value = res.data;
     });
@@ -111,12 +110,12 @@ const fetchData = () => {
     axios
         .get(`/api/alihmedia/getById/${props.id}`)
         .then((res) => {
-            const tgl_arsip = new Date(res.data.tgl_arsip); // Mengonversi ke format JavaScript Date
+            const tgl_arsip = new Date(res.data.tgl_arsip); 
 
             formData.id = res.data.id;
             formData.opd = res.data.opd;
             formData.jenis_arsip = res.data.jenis_arsip;
-            formData.tgl_arsip = res.data.tgl_arsip
+            formData.tgl_arsip = res.data.tgl_arsip;
             formData.no_arsip = res.data.no_arsip;
             formData.uraian = res.data.uraian;
             formData.keterangan = res.data.keterangan;
@@ -125,6 +124,8 @@ const fetchData = () => {
             formData.no_berkas = res.data.no_berkas;
             formData.status = res.data.status;
             formData.file_arsip = res.data.file_arsip;
+            formData.photo_ext = "pdf"; 
+            photoSource.value = `data:application/pdf;base64,${res.data.file_arsip}`;
         })
         .catch((error) => {
             console.error("Error fetching data:", error);
@@ -132,10 +133,14 @@ const fetchData = () => {
 };
 
 
+
 onMounted(() => {
-    if (props.id) fetchData();
-    fetchKlasifikasi();
+    if (props.id) {
+        fetchData(props.id);
+    }
+    fetchklasifikasi();
     fetchOPD();
+    
 });
 </script>
 
@@ -182,7 +187,7 @@ onMounted(() => {
                             <label class="font-semibold required">Tanggal Arsip</label>
                             <Calendar
                             v-model="formData.tgl_arsip"
-                            dateFormat="yy-mm-dd"  
+                            dateFormat="dd-mm-yy"  
                             iconDisplay="input"
                             showIcon
                             :invalid="errors?.tgl_arsip ? true : false"

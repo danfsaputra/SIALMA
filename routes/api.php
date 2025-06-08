@@ -13,31 +13,17 @@ use App\Http\Controllers\API\HakaksesController;
 use App\Http\Controllers\API\KeamananController;
 use App\Http\Controllers\API\PenyusutanController;
 use App\Http\Controllers\API\JenisarsipController;
-use App\Models\BeritaAcara;
-use App\Models\Alihmedia;
-use App\Models\Validasidata;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//Route::get('alihmedia/image/{file}', [AlihmediaController::class, 'image']);
-
-//Route::get('/getimage/{file}', [AlihmediaController::class, 'getImage']);
-//Route::get('/getImage/{file}', [ValidasidataController::class, 'getImage']);
-//Route::get('/getImage/{file}', [ValidasidataController::class, 'getImage']);
-
-//Route::get('/app/alihmedia/{id}', [AlihmediaController::class, 'getPdf']);
-
-//Route::get('berita/image/{file}', [BeritaacaraController::class, 'image']);
-
-//Route::get('/getImage/{file}', [BeritaacaraController::class, 'getImage']);;
-
-//Route::get('/app/berita/{id}', [BeritaAcaraController::class, 'getPdf']);
-
 // Referensi
 Route::get('getKlasifikasi', [ReferensiController::class, 'getKlasifikasi']);
 Route::get('getOPD', [ReferensiController::class, 'getOPD']);
+Route::get('getHakakses', [ReferensiController::class, 'getHakakses']);
+Route::get('getKeamanan', [ReferensiController::class, 'getKeamanan']);
+Route::get('getPenyusutan', [ReferensiController::class, 'getPenyusutan']);
 
 // Klasifikasi
 Route::prefix('klasifikasi')->group(function () {
@@ -45,8 +31,8 @@ Route::prefix('klasifikasi')->group(function () {
     Route::get('/getById/{id}', [KlasifikasiController::class, 'getById']);
     Route::post('/store', [KlasifikasiController::class, 'store']);
     Route::post('/destroy/{id}', [KlasifikasiController::class, 'destroy']);
-    Route::get('/validated', [KlasifikasiController::class, 'getValidatedData']);
-    Route::get('/alihmedia', [KlasifikasiController::class, 'getAlihmediaData']); // Tambahkan rute ini
+    //Route::get('/validated', [KlasifikasiController::class, 'getValidatedData']);
+    //Route::get('/alihmedia', [KlasifikasiController::class, 'getAlihmediaData']); 
 });
 
 // Alih Media
@@ -56,6 +42,7 @@ Route::prefix('alihmedia')->group(function () {
     Route::post('/store', [AlihmediaController::class, 'store']);
     Route::post('/destroy/{id}', [AlihmediaController::class, 'destroy']);
     Route::get('/getImage/{file}', [AlihmediaController::class, 'getImage']);
+    //Route::get('/api/alihmedia/file/{file}', [AlihmediaController::class, 'getImage']);
 });
 
 // Validasi Data
@@ -65,16 +52,6 @@ Route::prefix('validasidata')->group(function () {
     Route::post('/store', [ValidasidataController::class, 'store']);
     Route::post('/destroy/{id}', [ValidasidataController::class, 'destroy']);
     Route::get('/getImage/{file}', [ValidasidataController::class, 'getImage']);
-});
-
-// Manajemen Akun
-Route::prefix('users')->group(function () {
-    Route::get('/', [UserController::class, 'getData']);
-    Route::post('/store', [UserController::class, 'store']);
-    Route::post('/reset/{id}', [UserController::class, 'reset']);
-    Route::post('/changePassword', [UserController::class, 'changePassword']);
-    Route::post('/activate/{id}', [UserController::class, 'activate']);
-    Route::post('/destroy/{id}', [UserController::class, 'destroy']);
 });
 
 // Berita Acara
@@ -125,3 +102,13 @@ Route::prefix('jenis')->group(function () {
     Route::post('/store', [JenisarsipController::class, 'store']);
     Route::post('/destroy/{id}', [JenisarsipController::class, 'destroy']);
     });
+
+// Manajemen Akun
+Route::prefix('users')->group(function () {
+    Route::get('/', [UserController::class, 'getData']);
+    Route::post('/store', [UserController::class, 'store']);
+    Route::post('/reset/{id}', [UserController::class, 'reset']);
+    Route::post('/changePassword', [UserController::class, 'changePassword']);
+    Route::post('/activate/{id}', [UserController::class, 'activate']);
+    Route::post('/destroy/{id}', [UserController::class, 'destroy']);
+});

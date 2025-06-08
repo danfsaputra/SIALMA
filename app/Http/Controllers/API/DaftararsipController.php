@@ -10,17 +10,10 @@ class DaftararsipController extends Controller
 {
     public function getData(Request $request)
     {
-        // Ambil input dengan nilai default jika tidak ada
         $search = $request->input('search', '');
-        $perPage = $request->input('perPage', 10); // Default 10
-        $sortField = $request->input('sortField', 'id'); // Default 'id'
-        $sortOrder = $request->input('sortOrder') == 1 ? 'asc' : 'desc'; // Default 'asc'
-        $user = $request->user();
-
-        // Validasi user
-        if (!$user) {
-            return response()->json(['error' => 'User not authenticated'], 401);
-        }
+        $perPage = $request->input('perPage', 10);
+        $sortField = $request->input('sortField', 'id'); 
+        $sortOrder = $request->input('sortOrder') == 1 ? 'asc' : 'desc'; 
 
         // Query data
         $data = Daftararsip::where('status', 'Disetujui')
@@ -39,19 +32,19 @@ class DaftararsipController extends Controller
         return response()->json($data);
     }
 
-    public function store(Request $request)
-    {
-        $user = $request->user();
-        $departments_id = $user->departments_id;
-
-        $post_data = array_merge($request->all(), [
-            "validator_id" => $user->departments_id,
-        ]);
-
-        $alihmedia = Daftararsip::updateOrCreate(["validator_id" => $request->departments_id], $post_data);
-
-        return response()->json(["success" => true, "message" => "Berhasil menyimpan data !", "validator_id" => $alihmedia->departments_id]);
-    }
+    //public function store(Request $request)
+    //{
+    //    $user = $request->user();
+    //    $departments_id = $user->departments_id;
+    //
+    //    $post_data = array_merge($request->all(), [
+    //        "validator_id" => $user->departments_id,
+    //    ]);
+    //
+    //    $alihmedia = Daftararsip::updateOrCreate(["validator_id" => $request->departments_id], $post_data);
+    //
+    //    return response()->json(["success" => true, "message" => "Berhasil menyimpan data !", "validator_id" => $alihmedia->departments_id]);
+    //}
 
     public function getById($id)
     {

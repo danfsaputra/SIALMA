@@ -24,13 +24,11 @@ const formState = {
     file_arsip: "",
 };
 
-// const photoSource = ref('/app/alihmedia/$file');
-
 const pdfUrl = ref('');
 
 const fetchPdfUrl = async (file) => {
     try {
-        const response = await fetch(`/alihmedia/pdf/preview/${file}`);
+        const response = await fetch(`/validasi/pdf/preview/${file}`);
         const blob = await response.blob();
         pdfUrl.value = URL.createObjectURL(blob);
     } catch (error) {
@@ -56,30 +54,6 @@ const fetchOPD = async () => {
     });
 };
 
-// const submitForm = async (data) => {
-//     try {
-//         await axios.get("/sanctum/csrf-cookie");
-
-//         axios
-//             .post("/api/alihmedia/store", data)
-//             .then((res) => {
-//                 if (res.data.success == true) {
-//                     Swal("", res.data.message, "success").then(() => {
-//                         return router.visit("/alihmedia", { method: "get", data: { id: res.data.id } });
-//                     });
-//                 }
-//             })
-//             .catch((err) => {
-//                 console.log(err);
-//                 if (err.response.status === 422) {
-//                     errors.value = err.response.data.errors;
-//                 }
-//             });
-//     } catch (err) {
-//         console.log(err);
-//     }
-// };
-
 const fetchData = () => {
     axios
         .get(`/api/alihmedia/getById/${props.id}`)
@@ -96,31 +70,14 @@ const fetchData = () => {
             formData.klasifikasi_arsip = res.data.klasifikasi_arsip;
             formData.no_box = res.data.no_box;
             formData.no_berkas = res.data.no_berkas;
-            // formData.file_arsip = res.data.file_arsip;
             formData.created_at = res.data.created_at;
             formData.updated_at = res.data.updated_at;
-            //pdfUrl.value = "/api/getImage/" + res.data.file_arsip;
             fetchPdfUrl(res.data.file_arsip);
         })
         .catch((error) => {
             console.error("Error fetching data:", error);
         });
 };
-
-watchEffect(() => {
-    // if (props.items) {
-    //     const tgl_arsip = new Date(props.items.tgl_arsip);
-    //     formData.id = props.items.id;
-    //     formData.opd = props.items.opd;
-    //     formData.tgl_arsip = tgl_arsip.toLocaleDateString();
-    //     formData.jenis_arsip = props.items.jenis_arsip;
-    //     formData.klasifikasi_arsip = props.items.klasifikasi_arsip;
-    //     formData.uraian = props.items.uraian;
-    //     formData.no_box = props.items.no_box;
-    //     formData.no_berkas = props.items.no_berkas;
-    //     formData.keterangan = props.items.keterangan;
-    // }
-});
 
 onMounted(() => {
     if (props.id) fetchData();
